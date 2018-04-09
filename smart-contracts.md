@@ -18,15 +18,7 @@ npm i
 
 ## Token Contracts
 
-After the dependencies have been installed, take a look at the [OlympiaToken contract](https://github.com/gnosis/olympia-token/blob/master/contracts/OlympiaToken.sol). You will see that this contract is more or less functionally equivalent to the [PlayToken contract](https://github.com/gnosis/olympia-token/blob/master/contracts/PlayToken.sol), except that the optional [ERC20](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20.md) fields `name`, `symbol`, and `decimals` have also been specified.
-
-Let's turn our attention now to the [PlayToken contract](https://github.com/gnosis/olympia-token/blob/master/contracts/PlayToken.sol). Beyond the bare minimum necessary to implement the ERC20 interface sanely, this contract also implements two other mechanics: issuing new tokens to addresses, and determining a whitelist for token transfers.
-
-The ability to issue new tokens to addresses, or minting tokens, is restricted to the creator of the contract instance. This action can be performed with a call to the `issue` function, which takes an array of recipient addresses and credits them a newly minted amount of token. The token issuance may, for example, be tied into a registration process for the tournament.
-
-The creator of the contract instance is also required to set up a whitelist for token transfers. This prevents arbitrary transfers of token value from one account to another. PlayTokens can be transferred only to or from the whitelisted addresses. You may use this mechanic to ensure that users can only trade on authorized markets in the tournament.
-
-Due to the mechanics above, it is crucial for the integrity of the tournament that the private key used to deploy the token contract is guarded carefully, and that actions taken by the contract creator do not undermine the faith of the tournament players.
+It is crucial for the integrity of the tournament that the private key used to deploy the token contract is guarded carefully, and that actions taken by the contract creator do not undermine the faith of the tournament players.
 
 You may implement other token mechanics as you see fit, but that is beyond the scope of this document. 
 
@@ -104,9 +96,9 @@ index 7ae4d15..2c33ff4 100644
  
 ```
 
-Run the test suite with `npm t`.
+Be sure to run the test suite with `npm t` to make sure the tests still pass.
 
-## Deployment to a Public Network
+> ## Deployment to a Public Network
 
 The original Olympia was conducted primarily on the [Rinkeby test network](https://www.rinkeby.io/), but the Gnosis core contracts are deployed on the other major testnets such as the Kovan and Ropsten networks. Since the other components of the stack are network-agnostic, we can deploy to any testnet we choose. For the purpose of this guide, we will be using Rinkeby, but the following discussion applies to any other network.
 
