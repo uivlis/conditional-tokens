@@ -4,6 +4,8 @@ In order to run a fresh tournament, you will need to deploy a set of contracts f
 
 You may also wish to configure some parameters for your deployment, or even to modify some things. We will create a new package for these purposes. We will be using NPM for this guide, though it will probably work with EthPM if you adapt it appropriately.
 
+## Unbox a `lil-box`
+
 Let's say that we want to name the tournament play token "Big Token." We want to be able to work with this token in Gnosis JS and ultimately in the user interface to the tournament. Let's make and enter a directory called `big-token`, where we will prepare a package:
 
 ```sh
@@ -16,6 +18,8 @@ We will unbox a Truffle box called [lil-box](https://github.com/gnosis/lil-box) 
 ```sh
 truffle unbox gnosis/lil-box
 ```
+
+## Initialize Git and NPM
 
 Make a Git repo here if desired:
 
@@ -50,11 +54,9 @@ save it as a dependency in the package.json file.
 Press ^C at any time to quit.
 package name: (big-token) 
 ...
-entry point: (.eslintrc.js) index.js
-...
 ```
 
-Be sure to specify `index.js` as the entry point.
+## Specify the Contracts
 
 Install `@gnosis.pm/olympia-token` as a dependency:
 
@@ -62,7 +64,7 @@ Install `@gnosis.pm/olympia-token` as a dependency:
 npm i @gnosis.pm/olympia-token
 ```
 
-Then create a contract in `contracts/` called `BigToken.sol`:
+Then create a contract in `contracts/` called `BigToken.sol` (you are free to name this as you wish):
 
 ```sol
 pragma solidity ^0.4.21;
@@ -82,7 +84,9 @@ In our example, we are keeping the functionality of the [PlayToken](https://gith
 
 We also import the [AddressRegistry](https://github.com/gnosis/olympia-token) so that we can deploy our own copy of that registry for our users.
 
-Try compiling the file:
+## Do a Compilation Test
+
+Try compiling the contract:
 
 ```
 $ npm run truffle compile
@@ -96,6 +100,8 @@ Compiling ./contracts/BigToken.sol...
 
 Writing artifacts to ./build/contracts
 ```
+
+## Create Migration Scripts
 
 We have two build artifacts in `./build/contracts` in which we are currently interested: `BigToken.json` and `AddressRegistry.json`. We need the contracts these correspond with to be deployed, and we need these artifacts to contain that deployment information. First, we create a migration script to deploy these contracts in the `migrations` folder as `2_deploy_contracts.js`:
 
@@ -152,12 +158,106 @@ Network: UNKNOWN (id: 4447)
   Migrations: 0x8cdaf0cd259887258bc13a92c0a6da92698644c0
 ```
 
-If that worked, we're ready to deploy this on a public test network. Follow [this guide](https://gnosis.github.io/lil-box/deployment-guide.html) to do so.
+If that worked, we're ready to deploy this on a public test network.
 
-And finally, let's ship it!
+## Deploy Contracts on the Testnet
+
+For the purpose of this guide, let's suppose that we wish to deploy the contracts on [Rinkeby](https://www.rinkeby.io/#stats).
+
+[With that in mind, follow this deployment guide](https://gnosis.github.io/lil-box/deployment-guide.html) and run the migration process on the Rinkeby testnet.
+
+Make sure that the network information has been extracted into `networks.json` via `npm run extractnetinfo`. Also, make sure that the build artifacts contain only the information necessary via `npm run resetnetinfo`. You can check the information in the build artifacts via `npm run truffle networks`:
+
+```
+> truffle "networks"
+
+
+Network: rinkeby (id: 4)
+  AddressRegistry: 0xd3515609e3231d6c5b049a28d0d09d038b4cfaed
+  BigToken: 0x0152b7ed5a169e0292525fb2bf67ef1274010c74
+  Migrations: 0xf0681a06da32b8276b0a7b685019056c2bcfbf13
+```
+
+## Prepare Package Entry Point
+
+By default, `index.js` is set as the entry point of the package. We will export the most pertinent build artifacts in this entry point:
+
+```js
+module.exports = {
+  AddressRegistry: require("./build/contracts/AddressRegistry.json"),
+  BigToken: require("./build/contracts/BigToken.json")
+};
+```
+
+Let's verify that this works by attempting to import this in a Node shell:
+
+```
+$ node
+> require('.')
+{ AddressRegistry: 
+
+  [lots of stuff here...] }
+> 
+```
+
+## Ship it!
+
+Our package should be ready now! Before we ship it, let's do `npm pack` to see what will get published. You will see the `prepack` script run, and then a tarball named `[name]-[version].tgz` will be created. Let's verify the contents of what we will be publishing:
+
+```
+$ tar -tf big-token-2.0.0.tgz 
+package/package.json
+package/.eslintrc.js
+package/.prettierignore
+package/.travis.yml
+package/index.js
+package/LICENSE
+package/networks.json
+package/README.md
+package/truffle.js
+package/build/contracts/AddressRegistry.json
+package/build/contracts/BigToken.json
+package/build/contracts/Math.json
+package/build/contracts/Migrations.json
+package/build/contracts/PlayToken.json
+package/build/contracts/Proxied.json
+package/build/contracts/Proxy.json
+package/build/contracts/StandardToken.json
+package/build/contracts/StandardTokenData.json
+package/build/contracts/Token.json
+package/contracts/BigToken.sol
+package/contracts/Migrations.sol
+package/migrations/1_initial_migration.js
+package/migrations/2_deploy_contracts.js
+package/scripts/extract_network_info.js
+package/scripts/inject_network_info.js
+```
+
+If everything looks good, let's publish it!
 
 ```text
 $ npm publish
+
+> big-token@2.0.0 prepack .
+> eslint . && npm run fmtsrc && truffle compile && npm run resetnetinfo
+
+
+> big-token@2.0.0 fmtsrc /path/to/big-token
+> prettier --write "**/*.{js,json}"
+
+.eslintrc.js 46ms
+index.js 3ms
+migrations/1_initial_migration.js 6ms
+migrations/2_deploy_contracts.js 5ms
+scripts/extract_network_info.js 16ms
+scripts/inject_network_info.js 12ms
+truffle-local.js 5ms
+truffle.js 9ms
+
+> big-token@2.0.0 resetnetinfo /path/to/big-token
+> truffle networks --clean && node scripts/inject_network_info.js
+
++ big-token@2.0.0
 ```
 
 (By the way, `big-token` is taken, so find your own name ;)
