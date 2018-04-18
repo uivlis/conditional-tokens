@@ -9,6 +9,7 @@ Gnosis Apollo
    smart-contracts
    gnosisdb
    interface
+   sdk-utils
 
 .. Indices and tables
 .. ==================
