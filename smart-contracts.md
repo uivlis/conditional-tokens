@@ -200,6 +200,24 @@ $ node
 > 
 ```
 
+## Extra Scripts
+
+Let's add a few scripts to the `package.json`:
+
+```json
+    "issue-tokens": "truffle exec './node_modules/@gnosis.pm/olympia-token/scripts/issue_tokens.js' --play-token-name=BigToken",
+    "add-admins": "truffle exec './node_modules/@gnosis.pm/olympia-token/scripts/add_admins.js' --play-token-name=BigToken",
+    "remove-admins": "truffle exec './node_modules/@gnosis.pm/olympia-token/scripts/remove_admins.js' --play-token-name=BigToken",
+    "allow-transfers": "truffle exec './node_modules/@gnosis.pm/olympia-token/scripts/allow_transfers.js' --play-token-name=BigToken",
+    "disallow-transfers": "truffle exec './node_modules/@gnosis.pm/olympia-token/scripts/disallow_transfers.js' --play-token-name=BigToken"
+```
+
+These will let us issue BigToken, designate admins, and whitelist market and event contracts. See [here](https://github.com/gnosis/olympia-token#operations-overview) for more details. For example:
+
+```
+npm run issue-tokens -- --network rinkeby issue-tokens --amount 100e18 --to 0x873faa4cddd5b157e8e5a57e7a5479afc5d30f0b
+```
+
 ## Ship it!
 
 Our package should be ready now! Before we ship it, let's do `npm pack` to see what will get published. You will see the `prepack` script run, and then a tarball named `[name]-[version].tgz` will be created. Let's verify the contents of what we will be publishing:
