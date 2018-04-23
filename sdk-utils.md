@@ -95,4 +95,17 @@ In order to allow tournament participants to take part in these markets, you wil
 npm run allow-transfers -- --network=rinkeby --addresses=0xf042bb28f521d02852dcc3635418a5cd7d9ab565,0xcb5f35384e268f37504beb2465c1b8f42be8f414,0xc04f5adc5deba8acb39c0fdf9db0f5ed8cfe270d,0x8bdc656a33ea8ee00e6fb7256bd9ea9e22ea7227
 ```
 
-When those markets is done, set the `winningOutcome` and `node lib/main.js resolve` those markets accordingly.
+When a market has a winningOutcome, set its `winningOutcome` by editing `markets.json`:
+
+```json
+[
+  {
+    "title": "What will be the median gas price on December 31st, 2018?",
+    ...,
+    "winningOutcome": 0
+  },
+  ...
+]
+```
+
+Then run `node lib/main.js resolve`, which will allow you to resolve those markets with winning outcomes set accordingly.

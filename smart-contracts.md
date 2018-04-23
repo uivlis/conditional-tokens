@@ -212,7 +212,7 @@ Let's add a few scripts to the `package.json`:
     "disallow-transfers": "truffle exec './node_modules/@gnosis.pm/olympia-token/scripts/disallow_transfers.js' --play-token-name=BigToken"
 ```
 
-These will let us issue BigToken, designate admins, and whitelist market and event contracts. See [here](https://github.com/gnosis/olympia-token#operations-overview) for more details. For example:
+These will let us issue BigToken, designate admins, and whitelist market and event contracts. See [here](https://github.com/gnosis/olympia-token#operations-overview) for more details. For example, the following issues 100 SYM (the symbol for BigToken) to the address 0x873faa4cddd5b157e8e5a57e7a5479afc5d30f0b:
 
 ```
 npm run issue-tokens -- --network rinkeby issue-tokens --amount 100e18 --to 0x873faa4cddd5b157e8e5a57e7a5479afc5d30f0b
