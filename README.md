@@ -8,6 +8,8 @@ Apollo will cover the configuration and operation of such a tournament. Here are
 * [Git](https://git-scm.com/)
 * [Docker](https://docs.docker.com/install/) and [Docker Compose](https://docs.docker.com/compose/install/) installed for [GnosisDB](https://github.com/gnosis/gnosisdb).
 
+Also, to run everything on a single machine, 8GB of RAM is required, and at least 16GB is recommended.
+
 We will be assuming at least basic knowledge of the following:
 
 * [Ethereum](https://www.ethereum.org/)
