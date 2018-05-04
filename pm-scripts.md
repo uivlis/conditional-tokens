@@ -1,8 +1,8 @@
-# Administration Via SDK Utils
+# Administration Via pm-scripts
 
-Get the [Gnosis SDK Utils](https://github.com/gnosis/gnosis-sdk-utils). We will configure the utils in the following way:
+Get the [pm-scripts](https://github.com/gnosis/pm-scripts). We will configure the utils in the following way:
 
-`conf/config.json`: Let's configure the SDK utils use the `mnemonic` we used earlier to deploy the smart contracts. Also, make sure that the `collateralToken` is set to the deployed token. Finally, make sure that the `gnosisDB` instance is pointed at an instance configured for your tournament. For example:
+`conf/config.json`: Let's configure the pm-scripts use the `mnemonic` we used earlier to deploy the smart contracts. Also, make sure that the `collateralToken` is set to the deployed token. Finally, make sure that the `pm-trading-db` instance is pointed at an instance configured for your tournament. For example:
 
 ```json
 {
@@ -13,7 +13,7 @@ Get the [Gnosis SDK Utils](https://github.com/gnosis/gnosis-sdk-utils). We will 
     "host": "rinkeby.infura.io",
     "port": "443"
   },
-  "gnosisDB": {
+  "pm-trading-db": {
     "protocol": "http",
     "host": "localhost",
     "port": "8001"

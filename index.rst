@@ -7,9 +7,9 @@ Gnosis Apollo
 
    README
    smart-contracts
-   gnosisdb
+   pm-trading-db
    interface
-   sdk-utils
+   pm-scripts
 
 .. Indices and tables
 .. ==================
