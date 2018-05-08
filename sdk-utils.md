@@ -1,6 +1,6 @@
-# Administration Via PM Scripts
+# Administration Via SDK Utils
 
-Get the [Gnosis prediction market scripts](https://github.com/gnosis/pm-scripts). We will configure the utils in the following way:
+Get the [Gnosis SDK Utils](https://github.com/gnosis/gnosis-sdk-utils). We will configure the utils in the following way:
 
 `conf/config.json`: Let's configure the SDK utils use the `mnemonic` we used earlier to deploy the smart contracts. Also, make sure that the `collateralToken` is set to the deployed token. Finally, make sure that the `gnosisDB` instance is pointed at an instance configured for your tournament. For example:
 

@@ -1,6 +1,6 @@
 # Smart Contracts
 
-In order to run a fresh tournament, you will need to deploy a set of contracts for the tournament. These contracts can be found at the [`pm-apollo-contracts` repository](https://github.com/gnosis/pm-apollo-contracts), or on NPM as `@gnosis.pm/pm-apollo-contracts`.
+In order to run a fresh tournament, you will need to deploy a set of contracts for the tournament. These contracts can be found at the [`olympia-token` repository](https://github.com/gnosis/olympia-token), or on NPM as `@gnosis.pm/olympia-token`.
 
 You may also wish to configure some parameters for your deployment, or even to modify some things. We will create a new package for these purposes. We will be using NPM for this guide, though it will probably work with EthPM if you adapt it appropriately.
 
@@ -58,10 +58,10 @@ package name: (big-token)
 
 ## Specify the Contracts
 
-Install `@gnosis.pm/pm-apollo-contracts` as a dependency:
+Install `@gnosis.pm/olympia-token` as a dependency:
 
 ```sh
-npm i @gnosis.pm/pm-apollo-contracts
+npm i @gnosis.pm/olympia-token
 ```
 
 Then create a contract in `contracts/` called `BigToken.sol` (you are free to name this as you wish):
@@ -69,7 +69,7 @@ Then create a contract in `contracts/` called `BigToken.sol` (you are free to na
 ```sol
 pragma solidity ^0.4.21;
 
-import "@gnosis.pm/pm-apollo-contracts/contracts/PlayToken.sol";
+import "@gnosis.pm/olympia-token/contracts/PlayToken.sol";
 
 contract BigToken is PlayToken {
     string public constant name = "Big Token";
@@ -77,12 +77,12 @@ contract BigToken is PlayToken {
     uint8 public constant decimals = 18;
 }
 
-import "@gnosis.pm/pm-apollo-contracts/contracts/AddressRegistry.sol";
+import "@gnosis.pm/olympia-token/contracts/AddressRegistry.sol";
 ```
 
-In our example, we are keeping the functionality of the [PlayToken](https://github.com/gnosis/pm-apollo-contracts) the same, but you are free to modify the token however you'd like. Also note that we set the `name`, `symbol` and `decimal` fields which are optional [ERC20](https://theethereum.wiki/w/index.php/ERC20_Token_Standard) fields, but also highly recommended for correct interoperability with the frontend. Finally, make sure to set the `decimal` field to 18, matching the format of ether.
+In our example, we are keeping the functionality of the [PlayToken](https://github.com/gnosis/olympia-token) the same, but you are free to modify the token however you'd like. Also note that we set the `name`, `symbol` and `decimal` fields which are optional [ERC20](https://theethereum.wiki/w/index.php/ERC20_Token_Standard) fields, but also highly recommended for correct interoperability with the frontend. Finally, make sure to set the `decimal` field to 18, matching the format of ether.
 
-We also import the [AddressRegistry](https://github.com/gnosis/pm-apollo-contracts) so that we can deploy our own copy of that registry for our users.
+We also import the [AddressRegistry](https://github.com/gnosis/olympia-token) so that we can deploy our own copy of that registry for our users.
 
 ## Do a Compilation Test
 
@@ -205,14 +205,14 @@ $ node
 Let's add a few scripts to the `package.json`:
 
 ```json
-    "issue-tokens": "truffle exec './node_modules/@gnosis.pm/pm-apollo-contracts/scripts/issue_tokens.js' --play-token-name=BigToken",
-    "add-admins": "truffle exec './node_modules/@gnosis.pm/pm-apollo-contracts/scripts/add_admins.js' --play-token-name=BigToken",
-    "remove-admins": "truffle exec './node_modules/@gnosis.pm/pm-apollo-contracts/scripts/remove_admins.js' --play-token-name=BigToken",
-    "allow-transfers": "truffle exec './node_modules/@gnosis.pm/pm-apollo-contracts/scripts/allow_transfers.js' --play-token-name=BigToken",
-    "disallow-transfers": "truffle exec './node_modules/@gnosis.pm/pm-apollo-contracts/scripts/disallow_transfers.js' --play-token-name=BigToken"
+    "issue-tokens": "truffle exec './node_modules/@gnosis.pm/olympia-token/scripts/issue_tokens.js' --play-token-name=BigToken",
+    "add-admins": "truffle exec './node_modules/@gnosis.pm/olympia-token/scripts/add_admins.js' --play-token-name=BigToken",
+    "remove-admins": "truffle exec './node_modules/@gnosis.pm/olympia-token/scripts/remove_admins.js' --play-token-name=BigToken",
+    "allow-transfers": "truffle exec './node_modules/@gnosis.pm/olympia-token/scripts/allow_transfers.js' --play-token-name=BigToken",
+    "disallow-transfers": "truffle exec './node_modules/@gnosis.pm/olympia-token/scripts/disallow_transfers.js' --play-token-name=BigToken"
 ```
 
-These will let us issue BigToken, designate admins, and whitelist market and event contracts. See [here](https://github.com/gnosis/pm-apollo-contracts#operations-overview) for more details. For example, the following issues 100 SYM (the symbol for BigToken) to the address 0x873faa4cddd5b157e8e5a57e7a5479afc5d30f0b:
+These will let us issue BigToken, designate admins, and whitelist market and event contracts. See [here](https://github.com/gnosis/olympia-token#operations-overview) for more details. For example, the following issues 100 SYM (the symbol for BigToken) to the address 0x873faa4cddd5b157e8e5a57e7a5479afc5d30f0b:
 
 ```
 npm run issue-tokens -- --network rinkeby issue-tokens --amount 100e18 --to 0x873faa4cddd5b157e8e5a57e7a5479afc5d30f0b
