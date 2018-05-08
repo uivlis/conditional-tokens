@@ -16,4 +16,4 @@ We will be assuming at least basic knowledge of the following:
 * [Solidity](https://github.com/ethereum/solidity)
 * [Truffle](http://truffleframework.com/)
 
-You can find the latest version of this manual at [ReadTheDocs](https://apollo-docs.readthedocs.io/en/latest/).
+You can find the latest version of this manual at [ReadTheDocs](https://gnosis-apollo.readthedocs.io/en/latest/).
