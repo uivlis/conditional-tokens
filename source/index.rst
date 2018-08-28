@@ -23,12 +23,14 @@ Gnosis Apollo
     :caption: Smart Contracts
 
     smart-contracts
+    In Depth <https://gnosis-pm-contracts.readthedocs.io>
 
 .. toctree::
     :maxdepth: 3
     :caption: PM Scripts
 
     pm-scripts
+    In Depth <https://gnosis-pm-js.readthedocs.io/>
 
 .. toctree::
     :maxdepth: 3
