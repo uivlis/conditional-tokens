@@ -6,7 +6,7 @@ Refer to the [wiki](https://github.com/gnosis/pm-trading-ui/wiki/Configuration) 
 
 Then, create a `config.json` in your newly created folder as described in the wiki:
 
-```json
+```js
 {
   "pm-trading-db": {
     "protocol": "http",
@@ -28,7 +28,7 @@ Here, we use the `pm-trading-db` instance running on `localhost`, but if you hav
 
 You will also want to create an `interface.config.json`. You can follow the [wiki](https://github.com/gnosis/pm-trading-ui/wiki/Configuration#interface-config) to do a full configuration. Make sure the `tournament.registration.contractAddress` key is set to the address of the `AddressRegistry`, the `collateralToken.address` is set to the address of your `PlayToken`, and the `providers.default` is set to `METAMASK`:
 
-```json
+```js
 {
   ...,
 
@@ -83,7 +83,7 @@ Then deploy the contract. Once your contract is deployed, you should have an add
 
 Then, specify the `RewardClaimHandler` address along with additional parameters as `rewards.claimReward.contractAddress` in `config/interface.config.json` (note we are using Kovan's networkId in this example):
 
-```json
+```js
 {
   "rewards": {
     "enabled": true,
@@ -127,7 +127,7 @@ When the tournament is over, you may use MEW to distribute the rewards to the pl
 
 Afterwards, you may interact with your contract, using the `RewardClaimHandler` ABI which can also be found in the build artifact mentioned earlier in this section. Here is the ABI copied for convenience:
 
-```json
+```js
 [
   {
     "constant": true,

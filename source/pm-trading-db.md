@@ -1,4 +1,4 @@
-# pm-trading-db
+# Trading DB Quickstart
 
 Ethereum blockchain providers expose a common interface for querying, but to query blockchain providers directly for tournament-related info would be much too slow. That's why we've developed [pm-trading-db](https://github.com/gnosis/pm-trading-db), which syncs up with and queries a blockchain provider directly, filtering related data into an indexed database which provides great boosts in speed when querying the database.
 
