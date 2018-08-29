@@ -47,9 +47,15 @@ A quick rundown of all configuration entries, their meanings and their possible 
 
 ### Trading DB
 `gnosisdb` configures which trading-db you want to use to run the interface. The `pm-trading-db` package is required in order to keep track of previous markets, without having to fully sync an ethereum node, each time you want to access the interface.
+
+
 `protocol` - either `https` or `http`
+
 `host` - hostname for the database.
+
 `port` - 443 is the default for SSL.
+
+
 ```js
 {
   "gnosisdb": {
@@ -61,9 +67,14 @@ A quick rundown of all configuration entries, their meanings and their possible 
 
 ### Ethereum Node
 `ethereum` configures which ethereum node should be used to interact with the application. Infura is what we use and what is tested most in depth, but all other full-nodes should work too.
+
 `protocol` - either `https` or `http`
+
 `host` - hostname for the database.
+
 `port` - 443 is the default for SSL.
+
+
 ```js
   "ethereum": {
     "protocol": "https",
@@ -75,8 +86,11 @@ A quick rundown of all configuration entries, their meanings and their possible 
 ### Gas Price Calculation
 In order to display the cost of transactions, we require an external gas-estimation service. Multiple different ones are availble, [ETHGasstation](https://ethgasstation.info) is the default but you can also define your own ([take a look at the code](https://github.com/gnosis/pm-trading-ui/blob/master/src/api/gasPrice.js#L16)).
 
+
 `external.url` - the API url from which to fetch the gas price information
+
 `external.type` - Which implementation does the API use? currently only available `ETH_GAS_STATION` but extendable, as mentioned above.
+
 ```js
   "gasPrice": {
     "external": {
@@ -147,12 +161,20 @@ The gameguide allows you to set rules and information for new users. In Olympia 
 You can define which collateral token the application should use when interacting with markets. **Setting this property will also filter all markets based on their collateral, meaning only markets with the same collateral token as the one that was defined here will be shown!**
 
 `source` - defines how you want the ERC20 token contract should be found
+
   `contract` - means you define a contract thats available in `pm-js`s `Contracts` property. [To implement this, take a look at how this was done for our *olympia* tournament contracts.](https://github.com/gnosis/pm-trading-ui/blob/master/src/api/gnosis.js#L15)
+
   `address` - hardcoded address of the contract that's available on the network defined in `ethereum`. This is probably the easiest to setup.
+
   `eth` - uses a combination of Ether and `WETH`, a ERC20 wrapped Ether token. [Take a look here, for more information on this contract](https://github.com/gnosis/pm-contracts/blob/master/contracts/Tokens/EtherToken.sol)
+
 `contractName` - is only required when using `source: "contract"`, defines the name of the contract to be loaded.
+
 `symbol` - is used to overwrite the symbol. If this is not defined, it will try to use the name of the ERC20 token after loading it.
+
 `icon` - used to display next to the amount of collateral a user has. If not defined, will use a default `ethereum` style icon.
+
+
 ```js
   "collateralToken":  {
     "source": "contract",
@@ -167,7 +189,9 @@ You can define which collateral token the application should use when interactin
 ### Wallet Integrations
 
 There are multiple different built-in providers that can be used with the interface. The most tested provider is metamask. [Take a look at the code in order to build your own.](https://github.com/gnosis/pm-trading-ui/tree/master/src/integrations). Currently the following providers are available: `parity`, `metamask`, `remote`, `uport`. All providers are always available, as long as the correct network is used.
+
 `default` - defines which provider to use when multiple providers were found, or if no provider was found to tell the user which provider is recommended to interact with the application.
+
 `requireTOSAccept` - if you require the user to accept the terms and conditions before they can connect to the application and interact with it.
 
 ```js
@@ -181,11 +205,19 @@ There are multiple different built-in providers that can be used with the interf
 
 If you require legal compliance when your application is used outside of an internal testing or similar situations, you can enable a feature which will attach itself in multiple places, to have the user check-off all defines documents before they can access the application.
 
-`documents[].type` - defines the type of legal information you want the user to accept. Can be either `TOS_DOCUMENT` to refer to a `file` or `TOS_TEXT` to allow you to simply enter a text as `text`
+`documents[].type` - defines the type of legal information you want the user to accept. Can be either 
+
+`TOS_DOCUMENT` to refer to a `file` or `TOS_TEXT` to allow you to simply enter a text as `text`
+
 `documents[].id` - defines a unique identifier that is used to check if the user previously accepted this document. If you later update a legal document, a version can be added, that will require the user to accept a specific document again. e.g. `terms_of_service_v2`.
+
 `documents[].title` - Only for `TOS_DOCUMENT` to display as the title of the linked document.
+
 `documents[].file` - Only for `TOS_DOCUMENT` to link to a document.
+
 `documents[].text` - Only for `TOS_TEXT` to insert text that the user will have to "agree to"
+
+
 ```js
   "legalCompliance": {
     "enabled": true,
@@ -222,9 +254,14 @@ If you require legal compliance when your application is used outside of an inte
 You can define a custom footer, using either a `file` or `text`, as such:
 
 `footer.content.type` - either `text` or `file`
+
 `footer.content.fileName` - Only for `file`, the name of the file in `/assets/content`, has to end with `.md`
+
 `footer.content.source` - Only for `text`, the content of the footer as markdown.
+
 `footer.content.markdown` - Enabled markdown parsing of either the file or `source`, is type `text` is defined.
+
+
 ```js
   "footer": {
     "enabled": true,
@@ -323,8 +360,11 @@ In order to determine which thirdparty integrations we want to use, we developed
 These are configurable constants in the application.
 
 `LIMIT_MARGIN` - during trading it can happen that the margin for trade has been reduced by another users trade, after the specified amount (in percent) the user will receive a warning that the trade has been chaged.
+
 `NOTIFICATION_TIMEOUT` - how long it takes for `uport` style notifications to be considered timed out.
+
 `LOWEST_VALUE` - lowest possible value to display in the interface. Any value below will be shown `<${value}`, e.g. `Sell Price: <0.001`
+
 
 ```js
   "constants": {
