@@ -1,4 +1,4 @@
-# Smart Contracts
+# Setup
 
 In order to run a fresh tournament, you will need to deploy a set of contracts for the tournament. These contracts can be found at the [`pm-apollo-contracts` repository](https://github.com/gnosis/pm-apollo-contracts), or on NPM as `@gnosis.pm/pm-apollo-contracts`.
 
@@ -31,7 +31,7 @@ git commit -m "Initial commit"
 
 You may create a repo on Github if desired:
 
-![Repo creation screen](assets/make-github.png)
+![Repo creation screen](./_static/img/make-github.png)
 
 ```sh
 git remote add origin git@github.com:cag/big-token.git
@@ -204,7 +204,7 @@ $ node
 
 Let's add a few scripts to the `package.json`:
 
-```json
+```js
     "issue-tokens": "truffle exec './node_modules/@gnosis.pm/pm-apollo-contracts/scripts/issue_tokens.js' --play-token-name=BigToken",
     "add-admins": "truffle exec './node_modules/@gnosis.pm/pm-apollo-contracts/scripts/add_admins.js' --play-token-name=BigToken",
     "remove-admins": "truffle exec './node_modules/@gnosis.pm/pm-apollo-contracts/scripts/remove_admins.js' --play-token-name=BigToken",

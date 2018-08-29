@@ -1,10 +1,10 @@
-# Administration Via pm-scripts
+# Administration via pm-scripts
 
 Get the [pm-scripts](https://github.com/gnosis/pm-scripts). We will configure the utils in the following way:
 
 `conf/config.json`: Let's configure the pm-scripts use the `mnemonic` we used earlier to deploy the smart contracts. Also, make sure that the `collateralToken` is set to the deployed token. Finally, make sure that the `pm-trading-db` instance is pointed at an instance configured for your tournament. For example:
 
-```json
+```js
 {
   "mnemonic": "romance spirit scissors guard buddy rough cabin paddle cricket cactus clock buddy",
   "account": "",
@@ -30,7 +30,7 @@ Get the [pm-scripts](https://github.com/gnosis/pm-scripts). We will configure th
 
 `conf/markets.json`: We list the markets on which we would like to operate here:
 
-```json
+```js
 [
   {
     "title": "What will be the median gas price on December 31st, 2018?",
@@ -64,7 +64,7 @@ Get the [pm-scripts](https://github.com/gnosis/pm-scripts). We will configure th
 
 Then, we use `node lib/main.js deploy` to deploy these markets to the network. These markets will then gain values in `conf/markets.json`:
 
-```json
+```js
 [
   {
     "title": "What will be the median gas price on December 31st, 2018?",
@@ -89,6 +89,8 @@ Then, we use `node lib/main.js deploy` to deploy these markets to the network. T
 ]
 ```
 
+## Tournament Operation
+
 In order to allow tournament participants to take part in these markets, you will need to whitelist the `eventAddress` and `marketAddress` values. Go to your smart contract project (`big-token` in this example), and whitelist them with the following script:
 
 ```sh
@@ -97,7 +99,7 @@ npm run allow-transfers -- --network=rinkeby --addresses=0xf042bb28f521d02852dcc
 
 When a market has a winningOutcome, set its `winningOutcome` by editing `markets.json`:
 
-```json
+```js
 [
   {
     "title": "What will be the median gas price on December 31st, 2018?",
