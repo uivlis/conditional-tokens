@@ -1,67 +1,4 @@
-# Setting Up the Interface
-
-First, [clone and setup the interface](https://github.com/gnosis/pm-trading-ui).
-
-Refer to the [wiki](https://github.com/gnosis/pm-trading-ui/wiki/Configuration) for information about configuring the interface. First, you will want to create a folder for your tournament configuration. For this guide, let's assume a `big-tournament` folder has been created in `config/environments`.
-
-Then, create a `config.json` in your newly created folder as described in the wiki:
-
-```js
-{
-  "pm-trading-db": {
-    "protocol": "http",
-    "host": "localhost",
-    "port": 8000
-  },
-  "ethereum": {
-    "protocol": "https",
-    "host": "rinkeby.infura.io",
-    "port": 443
-  },
-  "whitelist": {
-    "0x873faa4cddd5b157e8e5a57e7a5479afc5d30f0b": "Your name"
-  }
-}
-```
-
-Here, we use the `pm-trading-db` instance running on `localhost`, but if you have a location on the internet where your instance of pm-trading-db is reachable, you may specify that here. Also, be sure to whitelist your account. The whitelisted accounts will be queried for markets against pm-trading-db, and only those markets created by these accounts will be displayed by the interface.
-
-You will also want to create an `interface.config.json`. You can follow the [wiki](https://github.com/gnosis/pm-trading-ui/wiki/Configuration#interface-config) to do a full configuration. Make sure the `tournament.registration.contractAddress` key is set to the address of the `AddressRegistry`, the `collateralToken.address` is set to the address of your `PlayToken`, and the `providers.default` is set to `METAMASK`:
-
-```js
-{
-  ...,
-
-  "tournament": {
-    "enabled": true,
-    "name": "Big Tournament",
-    "registration": {
-      "enabled": true,
-      "contractAddress": "0xd3515609e3231d6c5b049a28d0d09d038b4cfaed"
-    }
-  },
-  "collateralToken": {
-    "address": "0x0152b7ed5a169e0292525fb2bf67ef1274010c74",
-    "icon": "/assets/img/icons/icon_metamask.svg"
-  },
-  "providers": {
-    "default": "METAMASK",
-    "options": {
-      "UPORT": {
-        "appName": "Tournament test",
-        "clientId": "2ooNzwDvjgZTPswkrewUnxokRUH8KYpRNNL",
-        "network": "rinkeby",
-        "privateKey": "a42611a039cad931c41e072953cb7dcaaa6b2dfefeff6a459d9ce4281acf0c01",
-        "useNotifications": false
-      }
-    }
-  },
-
-  ...
-}
-```
-
-## Reward Claiming
+# Tournament Reward Claiming
 
 In order to allow tournament recipients to claim a reward of some ERC20 token, an instance of the `RewardClaimHandler` may be deployed, and that information must be relayed to the frontend.
 
@@ -81,21 +18,25 @@ Then add the reward token address at the end, padded left to 64 hex characters (
 
 Then deploy the contract. Once your contract is deployed, you should have an address. Let's say that address is `0x9720939c16665529dEaBE608bC3cA72509297F79`
 
-Then, specify the `RewardClaimHandler` address along with additional parameters as `rewards.claimReward.contractAddress` in `config/interface.config.json` (note we are using Kovan's networkId in this example):
+Then, specify the `RewardClaimHandler` address along with additional parameters as `rewardClaiming.claimReward.contractAddress` in your configuration (note we are using Kovan's networkId in this example):
 
 ```js
 {
+  "rewardClaiming": {
+    "enabled": false,
+    "claimReward": {
+      "enabled": false,
+      "claimStart": "2018-06-01T12:00:00",
+      "claimUntil": "2018-07-01T12:00:00",
+      "contractAddress": "0xe89f27dafb9ba68c864e47a0bf1e430664e419af",
+      "networkId": 42
+    }
+  },
   "rewards": {
     "enabled": true,
     "rewardToken": {
       "symbol": "RWD",
       "contractAddress": "0x3552D381b89Dcb92c59d7a0F8fe93b1e3BBE1886",
-      "networkId": 42
-    },
-    "claimReward": {
-      "claimStart": "2018-04-01T12:00:00",
-      "claimUntil": "2018-05-01T12:00:00",
-      "contractAddress": "0x9720939c16665529dEaBE608bC3cA72509297F79",
       "networkId": 42
     },
     "levels": [
@@ -264,19 +205,3 @@ Afterwards, you may interact with your contract, using the `RewardClaimHandler` 
 ```
 
 You must call `registerRewards`. When calling that function, specify a list of the tournament winners' **mainnet addresses** (or in this example case, Kovan addresses), and their corresponding winning amounts, as well as a duration in seconds for claiming the reward. This duration should match the tournament configuration.
-
-## Running the Dev Server
-
-If you would like to run the webpack development server included with the project using this configuration, then use:
-
-```sh
-GNOSIS_ENV='big-tournament' npm start
-```
-
-(with `big-tournament` swapped out with whatever your choice is)
-
-To produce a build of the frontend, use:
-
-```sh
-GNOSIS_ENV='big-tournament' npm build
-```

@@ -42,7 +42,8 @@ Gnosis Apollo
     :maxdepth: 3
     :caption: PM Trading UI
 
-    interface
+    pm-trading-ui
+    pm-trading-ui-rewards
 
 .. * :ref:`genindex`
 .. * :ref:`modindex`
