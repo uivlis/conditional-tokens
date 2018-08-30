@@ -336,7 +336,7 @@ You can enable user-badges for your tournament by enabling this feature. It will
   }
 ```
 
-**WIP**: Thirdparty Services
+### **WIP**: Thirdparty Services
 In order to determine which thirdparty integrations we want to use, we developed a plug-in system for integrations that can be included at a global scope, such as Google Analytics and the Chat Platform Intercom. To see how this was done, [take a look at the code](https://github.com/gnosis/pm-trading-ui/tree/master/src/utils/analytics).
 ```js
   "thirdparty": {
