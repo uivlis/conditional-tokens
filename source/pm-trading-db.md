@@ -73,7 +73,7 @@ The command `setup_tournament` will prepare the database and set up periodic tas
     ```sh
     python manage.py setup_tournament --start-block-number 2105737
     ```
-  - **Ethereum blockchain event listener** every 5 seconds (the main task of the application).
+  - **Ethereum blockchain event receiver** every 5 seconds (the main task of the application).
   - **Scoreboard calculation** every 10 minutes.
   - **Token issuance** every minute. Tokens will be issued in batches of 50 users (to prevent
   exceeding the block limitation). A flag will be set to prevent users from being issued again on next
@@ -95,16 +95,14 @@ first synchronization of Rinkeby may take some time, depending on how many block
 
 At this point you should have a `geth --rinkeby` node running alongside an instance of **pm-trading-db**.
 
-## Custom event receivers
+## Custom event receiver
 
-### Code Python event receiver
-Custom event receivers can be set up in Tradingdb extending `django_eth_events.chainevents.AbstractEventReceiver` and then define methods:
+### Implement Python event receiver
+With custom event receivers you will be able to listen for events on your own contracts. Custom event receivers can be set up in Tradingdb extending `django_eth_events.chainevents.AbstractEventReceiver` and then defining methods:
   - `save(decoded_event, block_info)`: Will process events when received. `block_info` will return [web3 block structure](https://web3py.readthedocs.io/en/stable/web3.eth.html#web3.eth.Eth.getBlock) of the ethereum block where the event is found.
   - `rollback(decoded_event, block_info)`: Will process events in case of reorg. The event will be the same that in `save`, so you decide how to rollback the changes (in case that's needed).
 
-You will be able to listen for events on your own contracts.
-
-Every `decoded_event` has `address` and `name`, and then decoded params under `params` key. `address` are always lowercase without `0x`. Example of event:
+Every `decoded_event` has `address` and `name`, and then decoded params under `params` key. `address` is always lowercase without `0x`. Example of event:
 ```js
 {
     "address": "b3289eaac0fe3ed15df177f925c6f8ceeb908b8f",
@@ -148,16 +146,16 @@ class TestEventReceiver(AbstractEventReceiver):
 ### Add contract ABI
 If you want to listen events for your **own contract**, you need to add the **json ABI** to **tradingdb/chainevents/abis/** folder.
 
-Then you need to configure your listener before starting **pm-tradingdb** for the first time. Go to **config/settings/olympia.py** and add your event listener as a Python dictionary. Required fields are:
-  - **ADDRESSES**: Address of the contract/s to the events to be listened.
+Then you need to configure your receiver before starting **pm-tradingdb** for the first time. Go to **config/settings/olympia.py** and add your event receiver as a Python dictionary. Required fields are:
+  - **ADDRESSES**: Address of the contract/s to the events to be listened to.
   - **EVENT_ABI**: ABI of your custom contract (used to decode the events).
-  - **EVENT_DATA_RECEIVER**: Absolute python import path for the custom event listener class.
+  - **EVENT_DATA_RECEIVER**: Absolute python import path for the custom event receiver class.
   - **NAME**: Name of the receiver, just don't use same name that another receiver.
 
 
-### Configure event listener
+### Configure custom event receiver
 
-Example of a custom event listener:
+Example of a custom event receiver:
 ```js
 {
     'ADDRESSES': ['0xD6fF69322719b077fDC5335535989Aa702016276', '0x992575d97fa3C31f39a81BDC3D517aE7D8C1C5A2'],
