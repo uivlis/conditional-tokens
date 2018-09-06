@@ -4,6 +4,7 @@ Ethereum blockchain providers expose a common interface for querying, but to que
 
 ## Tournament Setup
 
+### Deploy your contracts
 To configure a custom tournament, you need first to [deploy the smart contracts needed on the chosen public network](smart-contracts.md). For this setup guide, we will assume the choice of [Rinkeby](https://www.rinkeby.io/#stats).
 
 Take note of your deployed addresses for [AddressRegistry](https://github.com/gnosis/pm-apollo-contracts#addressregistry) and the [PlayToken](https://github.com/gnosis/pm-apollo-contracts#playtoken). You can find them with `npm run truffle networks`. This guide will assume the following as the deployed addresses, though you will have something different:
@@ -13,6 +14,16 @@ OlympiaToken: 0x2924e2338356c912634a513150e6ff5be890f7a0
 AddressRegistry: 0x12f73864dc1f603b2e62a36b210c294fd286f9fc
 ```
 
+### Run ethereum node
+You may have a running Geth node connected to [Rinkeby](https://www.rinkeby.io/#geth) on the same machine:
+
+```sh
+geth --rinkeby --rpc
+```
+
+If you don't want to have your own node you can use Infura's, but it will be slower than using a local node.
+
+### Configure pm-trading-db
 Clone the `pm-trading-db` repository:
 
 ```sh
@@ -34,13 +45,7 @@ ETHEREUM_DEFAULT_ACCOUNT=0x847968C6407F32eb261dC19c3C558C445931C9fF
 ETHEREUM_DEFAULT_ACCOUNT_PRIVATE_KEY=a3b12a165350ab3c7d1ecd3596096969db2839c7899a3b0b39dd479fdd5148c7
 ```
 
-If you don't have the private key for your account, but you do know the BIP39 mnemonic for it, you may enter your mnemonic into [Ganache](https://truffleframework.com/ganache) to recover the private key. You can omit the `ETHEREUM_DEFAULT_ACCOUNT_PRIVATE_KEY` if you have the **address unlocked** in your Ethereum node.
-
-You may have a running Geth node connected to [Rinkeby](https://www.rinkeby.io/#geth) on the same machine:
-
-```sh
-geth --rinkeby --rpc
-```
+If you don't have the private key for your account, but you do know the [BIP39](https://iancoleman.io/bip39/) mnemonic for it, you may enter your mnemonic into [Ganache](https://truffleframework.com/ganache) to recover the private key. You can omit the `ETHEREUM_DEFAULT_ACCOUNT_PRIVATE_KEY` if you have the **address unlocked** in your Ethereum node.
 
 Configure the HTTP provider on **.env** and change `DJANGO_SETTINGS_MODULE=config.settings.local` to `DJANGO_SETTINGS_MODULE=config.settings.rinkeby`:
 
@@ -53,6 +58,7 @@ We wrote **172.17.0.1** because that's usually the IP of the **docker host**, an
 
 Then in **pm-trading-db root folder**:
 
+### Run pm-trading-db in Docker
 ```
 docker-compose build --force-rm
 docker-compose run web sh
@@ -75,6 +81,7 @@ The command `setup_tournament` will prepare the database and set up periodic tas
   - **Token issuance flag clear**. Once a day the token issuance flag will be cleared so users will
   receive new tokens every day.
 
+### Final steps
 All these tasks can be changed in the [application admin](http://localhost:8000/admin/django_celery_beat/periodictask/).
 You will need a superuser:
 
@@ -89,6 +96,8 @@ first synchronization of Rinkeby may take some time, depending on how many block
 At this point you should have a `geth --rinkeby` node running alongside an instance of **pm-trading-db**.
 
 ## Custom event receivers
+
+### Code Python event receiver
 Custom event receivers can be set up in Tradingdb extending `django_eth_events.chainevents.AbstractEventReceiver` and then define methods:
   - `save(decoded_event, block_info)`: Will process events when received. `block_info` will return [web3 block structure](https://web3py.readthedocs.io/en/stable/web3.eth.html#web3.eth.Eth.getBlock) of the ethereum block where the event is found.
   - `rollback(decoded_event, block_info)`: Will process events in case of reorg. The event will be the same that in `save`, so you decide how to rollback the changes (in case that's needed).
@@ -136,6 +145,7 @@ class TestEventReceiver(AbstractEventReceiver):
         pass
 ```
 
+### Add contract ABI
 If you want to listen events for your **own contract**, you need to add the **json ABI** to **tradingdb/chainevents/abis/** folder.
 
 Then you need to configure your listener before starting **pm-tradingdb** for the first time. Go to **config/settings/olympia.py** and add your event listener as a Python dictionary. Required fields are:
@@ -143,6 +153,9 @@ Then you need to configure your listener before starting **pm-tradingdb** for th
   - **EVENT_ABI**: ABI of your custom contract (used to decode the events).
   - **EVENT_DATA_RECEIVER**: Absolute python import path for the custom event listener class.
   - **NAME**: Name of the receiver, just don't use same name that another receiver.
+
+
+### Configure event listener
 
 Example of a custom event listener:
 ```js
@@ -153,3 +166,5 @@ Example of a custom event listener:
     'NAME': 'OlympiaToken',
 },
 ```
+
+You should now be ready to run **pm-trading-db**
