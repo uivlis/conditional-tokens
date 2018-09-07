@@ -38,7 +38,7 @@ TOURNAMENT_TOKEN=0x2924e2338356c912634a513150e6ff5be890f7a0
 GENERIC_IDENTITY_MANAGER_ADDRESS=0x12f73864dc1f603b2e62a36b210c294fd286f9fc
 ```
 
-Add your ethereum account too for **token issuance**. You will need some **ether** on it for gas costs:
+Add your ethereum account too for **token issuance** in **.env**. You will need some **ether** on it for gas costs:
 
 ```sh
 ETHEREUM_DEFAULT_ACCOUNT=0x847968C6407F32eb261dC19c3C558C445931C9fF
@@ -69,7 +69,7 @@ docker-compose up
 ```
 
 The command `setup_tournament` will prepare the database and set up periodic tasks:
-  - `--start-block-number` will, if specified, start pm-trading-db processing at a specific block instead of all the way back at the genesis block. You should give it as late a block before tournament events start occurring as you can. We don't actually have to start syncing the database until the first block in which a contract we are considering has been deployed. Let's take [BigToken](https://rinkeby.etherscan.io/address/0xd3515609e3231d6c5b049a28d0d09d038b4cfaed) for example again. Its [contract creation transaction](https://rinkeby.etherscan.io/tx/0xaa10a3d8ba2a08ae277eaadd5b876753ac118ede542ae89c25c882eda3766c53) occurred at a block height of [2105737](https://rinkeby.etherscan.io/block/2105737). This means the `setup_tournament` command could be invoked like this:
+  - `--start-block-number` will, if specified, start pm-trading-db processing at a specific block instead of all the way back at the genesis block. You should provide the latest block before tournament events start occurring as you can. We don't actually have to start syncing the database until the first block in which a contract we are considering has been deployed. Let's take [BigToken](https://rinkeby.etherscan.io/address/0xd3515609e3231d6c5b049a28d0d09d038b4cfaed) for example again. Its [contract creation transaction](https://rinkeby.etherscan.io/tx/0xaa10a3d8ba2a08ae277eaadd5b876753ac118ede542ae89c25c882eda3766c53) occurred at a block height of [2105737](https://rinkeby.etherscan.io/block/2105737). This means the `setup_tournament` command could be invoked like this:
     ```sh
     python manage.py setup_tournament --start-block-number 2105737
     ```
@@ -95,11 +95,11 @@ first synchronization of Rinkeby may take some time, depending on how many block
 
 At this point you should have a `geth --rinkeby` node running alongside an instance of **pm-trading-db**.
 
-## Custom event receiver
+## Custom event receivers
 
 ### Implement Python event receiver
-With custom event receivers you will be able to listen for events on your own contracts. Custom event receivers can be set up in Tradingdb extending `django_eth_events.chainevents.AbstractEventReceiver` and then defining methods:
-  - `save(decoded_event, block_info)`: Will process events when received. `block_info` will return [web3 block structure](https://web3py.readthedocs.io/en/stable/web3.eth.html#web3.eth.Eth.getBlock) of the ethereum block where the event is found.
+With custom event receivers you will be able to listen for events on your own contracts. Custom event receivers can be set up in **pm-trading-db** extending `django_eth_events.chainevents.AbstractEventReceiver` and then defining methods:
+  - `save(decoded_event, block_info)`: Will process events when received. `block_info` will have the [web3 block structure](https://web3py.readthedocs.io/en/stable/web3.eth.html#web3.eth.Eth.getBlock) of the ethereum block where the event is found.
   - `rollback(decoded_event, block_info)`: Will process events in case of reorg. The event will be the same that in `save`, so you decide how to rollback the changes (in case that's needed).
 
 Every `decoded_event` has `address` and `name`, and then decoded params under `params` key. `address` is always lowercase without `0x`. Example of event:
@@ -144,10 +144,10 @@ class TestEventReceiver(AbstractEventReceiver):
 ```
 
 ### Add contract ABI
-If you want to listen events for your **own contract**, you need to add the **json ABI** to **tradingdb/chainevents/abis/** folder.
+If you want to listen events for your **own contract**, you need to add the **json ABI** to **tradingdb/chainevents/abis/** folder to make pm-trading-db capable of decoding the events.
 
 Then you need to configure your receiver before starting **pm-tradingdb** for the first time. Go to **config/settings/olympia.py** and add your event receiver as a Python dictionary. Required fields are:
-  - **ADDRESSES**: Address of the contract/s to the events to be listened to.
+  - **ADDRESSES**: List addresses of the contracts to be watched for events. If you need to watch one single address, use a one element list.
   - **EVENT_ABI**: ABI of your custom contract (used to decode the events).
   - **EVENT_DATA_RECEIVER**: Absolute python import path for the custom event receiver class.
   - **NAME**: Name of the receiver, just don't use same name that another receiver.
