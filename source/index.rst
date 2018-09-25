@@ -17,6 +17,11 @@ Gnosis Apollo
     
     Introduction <self>
     getting-started
+
+.. toctree::
+    :maxdepth: 3
+    :caption: Prediction Markets as a modular framework
+    
     prediction-markets-as-modular-framework
 
 .. toctree::
