@@ -53,9 +53,9 @@ npm run deploy -- -m examples/categoricalMarket.json -w 1e18
 
 This will create all the contracts related with a prediction market, [wrap ether](https://weth.io/) for you and fund the market with the WETH.
 
-Follow the instructions pm-script prompts on the console until the end.
+Follow the instructions that `pm-script` prompts in the console until the end.
 
-# Run de Ethereum Indexer
+## Run the Ethereum Indexer
 There are many ways to run our ethereum indexer (trading-db) but let's start with the basic one.
 
 Download the project:
@@ -70,4 +70,37 @@ It will take a few minutes to complete, depending on your network connection and
 
 Finally you will have the service running and a web server listening on http://localhost:8000/ , you can see here the documentation of the different endpoints that our trading interface uses.
 
-By default the indexer points to the rinkeby network trough [Infura nodes](https://infura.io/)
+By default the indexer points to the rinkeby network through [Infura nodes](https://infura.io/). Indexing a full chain can take a few hours consuming all nodes resources, but we don't need to index all the blockchain, we just need to index since the block in which was included our prediction market contracts.
+
+If you created the market just now, you can substract a few blocks from the current one, go to [etherscan](https://rinkeby.etherscan.io/) substract 100 blocks (that's around 20min of blocks) and execute:
+```
+docker-compose run web python manage.py setup --start-block-number <your-block-number>
+```
+
+This will start the indexing of the rinkeby chain and should take a few seconds. You now should see your market indexed in http://localhost:8000/api/markets/
+
+**Note: the default configuration points to infura and is very light in terms of performance so the service is not rate limited. For production settings use `DJANGO_SETTINGS_MODULE=config.settings.production`**
+
+## Setup the interface
+The trading-ui interface offers a generic interface to interact with prediction markets and is intented to be used as the starting point for extending it for your use case.
+Let's start downloading and installing the project:
+```
+git clone https://github.com/gnosis/pm-trading-ui
+cd pm-trading-ui
+docker-compose build --force-rm
+```
+
+Now the interface it's already functional, but we need to configure it with our ethereum account as whitelisted, in order to show the markets in the interface.
+Let's build the config template:
+```
+docker-compose run web npm run build-config
+```
+
+open the file `dist/config.json` with your favourite text editor and change `whiteslist: {}` for something like this:
+```json
+whitelist: {
+    "operator": "<your-ethereum-address>"
+}
+```
+
+Now everything is set, you can run the interface and start buying shares on your first prediction market! run `docker-compose up` and open your browser at http://localhost:5000
