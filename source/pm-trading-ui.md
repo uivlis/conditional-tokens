@@ -361,7 +361,7 @@ These are configurable constants in the application.
 
 `LIMIT_MARGIN` - during trading it can happen that the margin for trade has been reduced by another users trade, after the specified amount (in percent) the user will receive a warning that the trade has been chaged.
 
-`NOTIFICATION_TIMEOUT` - how long it takes for `uport` style notifications to be considered timed out.
+`NOTIFICATION_TIMEOUT` - how long it takes for `transaction` notifications to be considered timed out (milliseconds).
 
 `LOWEST_VALUE` - lowest possible value to display in the interface. Any value below will be shown `<${value}`, e.g. `Sell Price: <0.001`
 
