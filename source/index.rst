@@ -17,19 +17,7 @@ Gnosis Apollo
     
     Introduction <self>
     getting-started
-
-.. toctree::
-    :maxdepth: 3
-    :caption: Prediction Markets as a modular framework
-    
     prediction-markets-as-modular-framework
-
-.. toctree::
-    :maxdepth: 3
-    :caption: Smart Contracts
-
-    smart-contracts
-    In Depth <https://gnosis-pm-contracts.readthedocs.io>
 
 .. toctree::
     :maxdepth: 3
@@ -40,7 +28,7 @@ Gnosis Apollo
 
 .. toctree::
     :maxdepth: 3
-    :caption: PM Trading DB
+    :caption: PM Trading DB (Ethereum Indexer)
 
     pm-trading-db
 

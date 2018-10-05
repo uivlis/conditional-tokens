@@ -68,7 +68,7 @@ This will install all the dependencies and orchestrate the different docker cont
 
 It will take a few minutes to complete, depending on your network connection and computer resources.
 
-Finally you will have the service running and a web server listening on http://localhost:8000/ , you can see here the documentation of the different endpoints that our trading interface uses.
+Finally you will have the service running and a web server listening on [http://localhost:8000/](http://localhost:8000/) , you can see here the documentation of the different endpoints that our trading interface uses.
 
 By default the indexer points to the rinkeby network through [Infura nodes](https://infura.io/). Indexing a full chain can take a few hours consuming all nodes resources, but we don't need to index all the blockchain, we just need to index since the block in which was included our prediction market contracts.
 
@@ -77,7 +77,7 @@ If you created the market just now, you can substract a few blocks from the curr
 docker-compose run web python manage.py setup --start-block-number <your-block-number>
 ```
 
-This will start the indexing of the rinkeby chain and should take a few seconds. You now should see your market indexed in http://localhost:8000/api/markets/
+This will start the indexing of the rinkeby chain and should take a few seconds. You now should see your market indexed in [http://localhost:8000/api/markets/](http://localhost:8000/api/markets/)
 
 **Note: the default configuration points to infura and is very light in terms of performance so the service is not rate limited. For production settings use `DJANGO_SETTINGS_MODULE=config.settings.production`**
 
@@ -103,4 +103,4 @@ whitelist: {
 }
 ```
 
-Now everything is set, you can run the interface and start buying shares on your first prediction market! run `docker-compose up` and open your browser at http://localhost:5000
+Now everything is set, you can run the interface and start buying shares on your first prediction market! run `docker-compose up` and open your browser at [http://localhost:5000](http://localhost:5000)

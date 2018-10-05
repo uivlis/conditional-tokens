@@ -1,103 +1,166 @@
-# Trading DB Quickstart
+# Trading DB
 
-Ethereum blockchain providers expose a common interface for querying, but to query blockchain providers directly for tournament-related info would be much too slow. That's why we've developed [pm-trading-db](https://github.com/gnosis/pm-trading-db), which syncs up with and queries a blockchain provider directly, filtering related data into an indexed database which provides great boosts in speed when querying the database.
+We described in a [previous section](prediction-markets-as-modular-framework.html#ethereum-indexer) the benefits of having an ethereum indexer over the classical approach of quering directly the blockchain.
+In this section we will cover the differnt ways of executing it, configurations and more advanced scennarios where you will need to modify our indexer to fit with your custom smart contract modules and all the different configuration parameters available.
 
-## Tournament Setup
+TradingDB is a python project based on [django](https://www.djangoproject.com/) and [celery](http://www.celeryproject.org/) that follows an architecture of micro-services, with 3 main components: the web API, a scheduler (producer) and worker (consumer). These 3 componentes use a message queu to communicate, by default we use Redis and also a Relational database (we recommend postgresql).
+There are other external services needed as and ethereum node (depending on the use case you could use infura) and an IPFS node (you can use infura for this).
 
-### Deploy your contracts
-To configure a custom tournament, you need first to [deploy the smart contracts needed on the chosen public network](smart-contracts.md). For this setup guide, we will assume the choice of [Rinkeby](https://www.rinkeby.io/#stats).
+There are many ways of executing this software, but mainly those are 4:
+* [Docker-compose](#docker-compose)
+* Docker
+* Container Orchestrator. e.g Kubernetes
+* Bare-metal 
 
-Take note of your deployed addresses for [AddressRegistry](https://github.com/gnosis/pm-apollo-contracts#addressregistry) and the [PlayToken](https://github.com/gnosis/pm-apollo-contracts#playtoken). You can find them with `npm run truffle networks`. This guide will assume the following as the deployed addresses, though you will have something different:
+## Docker-compose
+[docker-compose](https://docs.docker.com/compose/) is a a tool for defining and running multi-container Docker applications and link the dependencies between them. You can see it as tool for managing micro-service and container projects as monoliths, to make the execution easier for development.
 
+If you take a look at our [docker-compose.yml](https://github.com/gnosis/pm-trading-db/blob/master/docker-compose.yml) we have defined many services inside, like the postgresql database and the redis cache. This makes the onboarding very easy, everything you need to do is running two commands.
 ```
-OlympiaToken: 0x2924e2338356c912634a513150e6ff5be890f7a0
-AddressRegistry: 0x12f73864dc1f603b2e62a36b210c294fd286f9fc
-```
-
-### Run ethereum node
-You may have a running Geth node connected to [Rinkeby](https://www.rinkeby.io/#geth) on the same machine:
-
-```sh
-geth --rinkeby --rpc
-```
-
-If you don't want to have your own node you can use Infura's, but it will be slower than using a local node.
-
-### Configure pm-trading-db
-Clone the `pm-trading-db` repository:
-
-```sh
-git clone https://github.com/gnosis/pm-trading-db.git
-cd pm-trading-db
-```
-
-Change these lines with the previous values in **.env_rinkeby**:
-
-```sh
-TOURNAMENT_TOKEN=0x2924e2338356c912634a513150e6ff5be890f7a0
-GENERIC_IDENTITY_MANAGER_ADDRESS=0x12f73864dc1f603b2e62a36b210c294fd286f9fc
-```
-
-Add your ethereum account too for **token issuance** in **.env**. You will need some **ether** on it for gas costs:
-
-```sh
-ETHEREUM_DEFAULT_ACCOUNT=0x847968C6407F32eb261dC19c3C558C445931C9fF
-ETHEREUM_DEFAULT_ACCOUNT_PRIVATE_KEY=a3b12a165350ab3c7d1ecd3596096969db2839c7899a3b0b39dd479fdd5148c7
-```
-
-If you don't have the private key for your account, but you do know the [BIP39](https://iancoleman.io/bip39/) mnemonic for it, you may enter your mnemonic into [Ganache](https://truffleframework.com/ganache) to recover the private key. You can omit the `ETHEREUM_DEFAULT_ACCOUNT_PRIVATE_KEY` if you have the **address unlocked** in your Ethereum node.
-
-Configure the HTTP provider on **.env** and change `DJANGO_SETTINGS_MODULE=config.settings.local` to `DJANGO_SETTINGS_MODULE=config.settings.rinkeby`:
-
-```
-DJANGO_SETTINGS_MODULE=config.settings.rinkeby
-ETHEREUM_NODE_URL=http://172.17.0.1:8545
-```
-
-We wrote **172.17.0.1** because that's usually the IP of the **docker host**, and **geth** is running in your machine, not in docker.
-
-Then in **pm-trading-db root folder**:
-
-### Run pm-trading-db in Docker
-```
-docker-compose build --force-rm
-docker-compose run web sh
-python manage.py migrate
-python manage.py setup_tournament --start-block-number 2000000
-exit
+docker-compose build
 docker-compose up
 ```
 
-The command `setup_tournament` will prepare the database and set up periodic tasks:
-  - `--start-block-number` will, if specified, start pm-trading-db processing at a specific block instead of all the way back at the genesis block. You should provide the latest block before tournament events start occurring as you can. We don't actually have to start syncing the database until the first block in which a contract we are considering has been deployed. Let's take [BigToken](https://rinkeby.etherscan.io/address/0xd3515609e3231d6c5b049a28d0d09d038b4cfaed) for example again. Its [contract creation transaction](https://rinkeby.etherscan.io/tx/0xaa10a3d8ba2a08ae277eaadd5b876753ac118ede542ae89c25c882eda3766c53) occurred at a block height of [2105737](https://rinkeby.etherscan.io/block/2105737). This means the `setup_tournament` command could be invoked like this:
-    ```sh
-    python manage.py setup_tournament --start-block-number 2105737
-    ```
-  - **Ethereum blockchain event receiver** every 5 seconds (the main task of the application).
-  - **Scoreboard calculation** every 10 minutes.
-  - **Token issuance** every minute. Tokens will be issued in batches of 50 users (to prevent
-  exceeding the block limitation). A flag will be set to prevent users from being issued again on next
-  execution of the task.
-  - **Token issuance flag clear**. Once a day the token issuance flag will be cleared so users will
-  receive new tokens every day.
-
-### Final steps
-All these tasks can be changed in the [application admin](http://localhost:8000/admin/django_celery_beat/periodictask/).
-You will need a superuser:
-
+The `up` command will run forever. In case you need to access one of the services for management, you can use `run`:
 ```
 docker-compose run web sh
-python manage.py createsuperuser
+docker-compose run worker sh
+docker-compose run scheduler sh
+python manage.py
+``` 
+
+Note that by default, the configuration used is for the Rinkeby network. Check `config.settings.rinkeby`
+
+## Docker
+You can check the tradingdb images in the public docker registry [here](https://hub.docker.com/r/gnosispm/pm-trading-db/tags/). The same image can be used for the 3 pieces of the system: web, scheduler and worker.
+
+Basically you will need to run a different command for each piece:
+* Web: `docker/web/run_web.sh` [code](https://github.com/gnosis/pm-trading-db/blob/v1.7.3/docker/web/run_web.sh)
+* Scheduler: `docker/web/celery/scheduler/run.sh` [code](https://github.com/gnosis/pm-trading-db/blob/v1.7.3/docker/web/celery/scheduler/run.sh)
+* Worker: `docker/web/celery/worker/run.sh` [code](https://github.com/gnosis/pm-trading-db/blob/v1.7.3/docker/web/celery/worker/run.sh)
+
+Running it directly with docker will mean you need to manage restarts, failures and connections. Take a look at the configuration section to know which parameters do you need to pass from environment.
+
+## Kubernetes
+[Kubernetes](https://kubernetes.io/) is one of the most robust solutions for container orchestration and is what **we recommend for production** of TradingDB.
+
+In order to run this project on your kubernetes cluster, you need to follow these steps:
+
+```sh
+# Verify Kubernetes version is > 1.9
+kubectl get nodes
 ```
 
-You should have now the api running in http://localhost:8000. You have to be patient because the
-first synchronization of Rinkeby may take some time, depending on how many blocks pm-trading-db has to process. It may take even more time if your Geth node is unsynchronized, since it [may need to finish synchronizing](https://github.com/ethereum/go-ethereum/issues/14338) before it will have the information required.
+### Database configuration
+The database configuration of tradingdb uses [kubernetes secrets](https://kubernetes.io/docs/concepts/configuration/secret/) for storing this sensitive information.
+```sh
+kubectl create secret generic tradingdb-database \
+--from-literal host='[DATABASE_HOST]' \
+--from-literal name=[DATABASE_NAME] \
+--from-literal user=[DATABASE_USER] \
+--from-literal password='[DATABASE_PASSWORD]' \
+--from-literal port=[DATABASE_PORT]
+```
 
-At this point you should have a `geth --rinkeby` node running alongside an instance of **pm-trading-db**.
+### Queue and Cache
+We use [Redis](https://redis.io/) as message broker for Celery (handles the different tasks messages as indexing, issuing tokens, etc) and also as the cache service.
+You can apply it in your cluster by:
+```
+kubectl apply -f kubernetes/redis-tradingdb
+```
+By default this creates a deployment and a service in kubernetes. You should not need further configuration for this part.
 
-## Custom event receivers
+### TradingdDB services
+As we explained in the previous section, tradingdDB follows a microservice architecture, and it's core is formed by 3 services: `worker, scheduler and web API`. In order to deploy these services there are a minimum of configuration parameters you need to set up like:
+* Ethereum node URL (by default points to infura, in production you should have an ethereum node that supports many requests per second). Besides what you would think, the interface with better performance is the RPC API (over Webservices or IPC sockets). This is because we can batch requests in the same HTTP connection and the underliying implementation of ethereum nodes it's more efficient for the RPC API.
+* DJANGO_SECRET_KEY this parameter secures your sessions with the admin interface (/admin). In a UNIX environment you can generate a random string with this command: `head /dev/urandom | shasum -a 512`
 
-### Implement Python event receiver
+There are many more parameters we describe in the [configuration section](/tradingdb-configuration).
+
+After you have your configuration set, apply the deployment with:
+```sh
+kubectl apply -f kubernetes/tradingdb
+```
+
+## Bare metal
+TradingDB it's a python 3.6 project, if you are 
+
+# Configuration Parameters
+In the project you will find some configuration templates for different environments. These are in `config/settings/`
+* `base.py` As the name says, it's the base of all the config parameters, has the common configurations and the default values.
+* `ganache.py` You should use this config when testing with [ganache-cli](https://github.com/trufflesuite/ganache-cli) running `ganache-cli -d`
+* `production.py` Disables the debug settings and is oriented to be use on mainnet (or a testnet for running an olympia tournament).
+* `rinkeby.py` Has configured the default addresses for rinkeby and also for one of the Olympia tournaments [Gnosis run](https://blog.gnosis.pm/announcing-gnosis-olympia-dappcon-edition-be44643a046e), as an example.
+* `test.py` Used by tests.
+
+Here you have a list of all the possible parameters you can set as ENV parameter (not all configs allows to override by ENV).
+
+### DJANGO_DEBUG
+`bool` - Enables debug logs. Makes it easier for finding bugs in the API.
+### DATABASE_URL
+`url` - Database url used by the service, follows [django-environ supported db_url](https://github.com/joke2k/django-environ#supported-types)
+### CELERY_BROKER_URL
+`url` - Follows [this format](https://kombu.readthedocs.io/en/master/userguide/connections.html#connection-urls)
+
+### ETH_BACKUP_BLOCKS 
+`int` - amount of blocks saved for rollbacks (chain reorgs). It's 100 by default.
+
+### ETH_PROCESS_BLOCKS 
+`int` - number of blocks processed as bulk for the indexer every time an indexing task is triggered (by default every 500ms). Increasing this value will mean "maybe" the indexing will be faster, but that will also depend on the cpu, memory and network resources. There will be many RPC requests and you might kill you ethereum node instance ^^.
+
+### ETH_FILTER_MAX_BLOCKS 
+`int` - follows the same concept than the previous parameter but with the difference that instead of performing pulling of ethereum logs, it uses ethereum filters. Ethereum filters are used for the first sync as those are faster for synchronizing historic data.
+
+### ETHEREUM_NODE_URL (mandatory in production)
+`protocol://host:port` - The RPC endpoint of your ethereum node.
+
+### ETHEREUM_MAX_WORKERS 
+`int` - default `10`. Represents the amount of parallel processes performing requests to the ethereum node.
+
+### ETHEREUM_MAX_BATCH_REQUESTS 
+`int` - default `500`. Amount of RPC requests batched in one single HTTP request.
+
+### IPFS_HOST
+`string` - default `ipfs.infura.io`
+
+### IPFS_PORT
+`int` - default `5001`
+
+### ALLOWED_HOSTS
+`string` - Separated by commas, url and ips allowed to be used for the API.
+
+### LMSR_MARKET_MAKER
+`ethereum checksum address` - Automated market maker allowed to be used by market contracts. You can check the default addresses for each network [here](https://unpkg.com/@gnosis.pm/pm-contracts@1.1.0/networks.json)
+
+### CENTRALIZED_ORACLE_FACTORY
+`ethereum checksum address` - Centralized Oracle factory contract. You can check the default addresses for each network [here](https://unpkg.com/@gnosis.pm/pm-contracts@1.1.0/networks.json)
+
+### EVENT_FACTORY
+`ethereum checksum address` - Event factory contract. You can check the default addresses for each network [here](https://unpkg.com/@gnosis.pm/pm-contracts@1.1.0/networks.json)
+
+### MARKET_FACTORY
+`ethereum checksum address` - Market factory contract. You can check the default addresses for each network [here](https://unpkg.com/@gnosis.pm/pm-contracts@1.1.0/networks.json)
+
+### TOURNAMENT_TOKEN (Olympia related)
+`ethereum checksum address` - Represents the [Olympia token](https://github.com/gnosis/pm-apollo-contracts/blob/master/contracts/OlympiaToken.sol) used for tournament (use 0x0000000000000000000000000000000000000001 if you want to disable it)
+
+### ETHEREUM_DEFAULT_ACCOUNT_PRIVATE_KEY (Olympia related)
+`string` - Ethereum private key used for tournament tokens issuance. This account should be the creator of the tournament token.
+
+### TOURNAMENT_TOKEN_ISSUANCE (Olympia related)
+`int` - Amount of tokens to be issued per participant. **NOTE THE AMOUNT IS IN WEI UNITS**
+
+### ISSUANCE_GAS (Olympia related)
+`int` - Gas limit of issuance transactions.
+
+### ISSUANCE_GAS_PRICE (Olympia related)
+`int` - Gas price used for issuance transactions.
+
+
+# Extend TradingDB (ADVANCED)
+There are many reason why you would like to extend the project, the main one is that you have custom contracts and specific data that you would like to save in the indexer or trigger some actions (like send an email after a deposit transfer).
+
+## Implement Python event receiver
 With custom event receivers you will be able to listen for events on your own contracts. Custom event receivers can be set up in **pm-trading-db** extending `django_eth_events.chainevents.AbstractEventReceiver` and then defining methods:
   - `save(decoded_event, block_info)`: Will process events when received. `block_info` will have the [web3 block structure](https://web3py.readthedocs.io/en/stable/web3.eth.html#web3.eth.Eth.getBlock) of the ethereum block where the event is found.
   - `rollback(decoded_event, block_info)`: Will process events in case of reorg. The event will be the same that in `save`, so you decide how to rollback the changes (in case that's needed).
@@ -143,7 +206,7 @@ class TestEventReceiver(AbstractEventReceiver):
         pass
 ```
 
-### Add contract ABI
+## Add contract ABI
 If you want to listen events for your **own contract**, you need to add the **json ABI** to **tradingdb/chainevents/abis/** folder to make pm-trading-db capable of decoding the events.
 
 Then you need to configure your receiver before starting **pm-tradingdb** for the first time. Go to **config/settings/olympia.py** and add your event receiver as a Python dictionary. Required fields are:
@@ -165,4 +228,4 @@ Example of a custom event receiver:
 },
 ```
 
-You should now be ready to run **pm-trading-db**
+You should now be ready to run **tradingDB**
