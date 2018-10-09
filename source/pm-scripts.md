@@ -3,6 +3,8 @@ pm-scripts it's the recommended tool for deploying your prediction markets contr
 
 Let's start by getting the [pm-scripts](https://github.com/gnosis/pm-scripts). We will configure the utils in the following way:
 
+## Configuration
+
 `conf/config.json`: Let's configure the pm-scripts use the `mnemonic` we used earlier to deploy the smart contracts. Also, make sure that the `collateralToken` is set to the deployed token. Finally, make sure that the `tradingDB` instance is pointed at an instance configured for your tournament. For example:
 
 ```js
@@ -28,6 +30,8 @@ Let's start by getting the [pm-scripts](https://github.com/gnosis/pm-scripts). W
   "collateralToken": "0x0152b7ed5a169e0292525fb2bf67ef1274010c74"
 }
 ```
+
+## Deploy markets
 
 `conf/markets.json`: We list the markets on which we would like to operate here:
 
@@ -88,4 +92,20 @@ Then, we use `npm run deploy` to deploy these markets to the network. These mark
     "marketAddress": "0x8bdc656a33ea8ee00e6fb7256bd9ea9e22ea7227"
   }
 ]
+```
+
+## Resolve Markets
+pm-scripts it's also used to resolve the outcome of a market. for that end the steps are easy, let's set up the parameter `winningOutcome`:
+```javascript
+[
+  {
+    ...
+    "winningOutcome": 123456789
+    ...
+  }
+]
+```
+And press `resolve`:
+```sh
+npm run resolve
 ```
