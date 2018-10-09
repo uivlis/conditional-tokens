@@ -111,6 +111,76 @@ You have now two tokens:
 
 If you want to exchange it back to WETH, execute:
 ```javascript
+async function sellAllOutcomes() {
+    const sellValue = 1e17 // 0.1 Outcome tokens
 
+    const sellTx = await event.sellAllOutcomes.sendTransaction(sellValue)
+    await event.constructor.syncTransaction(sellTx)
+    console.log("0.1 collateral token index 0 and 1 exchanged 1:1 for WETH: https://rinkeby.etherscan.io/tx/" + sellTx)
+}
+sellAllOutcomes()
+```
+
+And then check your WETH balance and convert it back to normal ETH.
+```javascript
+gnosis.etherToken.balanceOf(gnosis.defaultAccount).then(balance => console.log("Your balance is: "+balance.div("1e18").toString()+" WETH"))
+async function withdrawWETH(){
+    const withdrawValue = 1e17 // 0.1 ether
+    const withdrawTx = await gnosis.etherToken.withdraw(1e17)
+    await gnosis.etherToken.constructor.syncTransaction(withdrawTx)
+    console.log("0.1 WETH writhawed to ETH: https://rinkeby.etherscan.io/tx/" + withdrawTx)
+}
+withdrawWETH()
+```
 
 ## Automated market maker
+The "normal" way to interact with prediction markets in Gnosis, it's trough it's [LMSR automated market maker](/lmsr). Basically the market maker it's the one that sets the outcome price based on the demand. It's a [zero-sum game](https://en.wikipedia.org/wiki/Zero-sum_game) where the potential money you can earn it's due to a pontential loss of other party.
+
+The automated market maker operates trough the market contract, and can be accessed individually to check market prices:
+```javascript
+async function calcCost() {
+    const cost = await gnosis.lmsrMarketMaker.calcCost(market.address, 0, 1e18)
+    console.info(`Buy 1 Outcome Token with index 0 costs ${cost.valueOf()/1e18} WETH tokens`)
+}
+calcCost()
+```
+
+Let's say now that you've decided that these outcome tokens are worth it. pm-js contains convenience functions for buying and selling outcome tokens from a market backed by an LMSR market maker. They are buyOutcomeTokens and sellOutcomeTokens. To buy these outcome tokens, you can use the following code:
+
+```js
+async function buyOutcomeTokens() {
+    await gnosis.buyOutcomeTokens({
+        market,
+        outcomeTokenIndex: 0,
+        outcomeTokenCount: 1e18,
+    })
+    console.info('Bought 1 Outcome Token of Outcome with index 2')
+}
+buyOutcomeTokens()
+```
+This function internally will perform 2-3 transaction, depending if you already convert ETH to WETH or if it uses another token.
+You can check your balance, as in the previous section, by calling: `checkBalances()`
+
+Similarly, you can see how much these outcome tokens are worth to the `market` with `LMSRMarketMaker.calcProfit`
+
+```js
+async function calcProfit() {
+    const profit = await gnosis.lmsrMarketMaker.calcProfit(market.address, 0, 1e18)
+    console.info(`Sell 1 Outcome Token with index 2 gives ${profit.valueOf()/1e18} ETH tokens of profit`)
+}
+calcProfit()
+```
+
+If you want to sell the outcome tokens you have bought, you can do the following:
+
+```js
+async function sellOutcomeTokens() {
+    await gnosis.sellOutcomeTokens({
+        market,
+        outcomeTokenIndex: 2,
+        outcomeTokenCount: 1e18,
+    })
+}
+sellOutcomeTokens()
+```
+
