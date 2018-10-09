@@ -21,10 +21,17 @@ Gnosis Apollo
 
 .. toctree::
     :maxdepth: 3
-    :caption: PM Scripts
+    :caption: Create Prediction Markets
 
     pm-scripts
-    In Depth <https://gnosis-pm-js.readthedocs.io/>
+
+.. toctree::
+    :maxdepth: 0
+    :caption: Javascript/Node.js library
+
+    pm-js
+    pm-js-usage
+    pm-js-notes
 
 .. toctree::
     :maxdepth: 3

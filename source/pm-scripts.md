@@ -1,8 +1,9 @@
-# Administration via pm-scripts
+# PM-SCRIPTS
+pm-scripts it's the recommended tool for deploying your prediction markets contracts. It allows to deploy easily in any network all kind of prediction markets even without understanding of what are all the pieces of a prediction market.
 
-Get the [pm-scripts](https://github.com/gnosis/pm-scripts). We will configure the utils in the following way:
+Let's start by getting the [pm-scripts](https://github.com/gnosis/pm-scripts). We will configure the utils in the following way:
 
-`conf/config.json`: Let's configure the pm-scripts use the `mnemonic` we used earlier to deploy the smart contracts. Also, make sure that the `collateralToken` is set to the deployed token. Finally, make sure that the `pm-trading-db` instance is pointed at an instance configured for your tournament. For example:
+`conf/config.json`: Let's configure the pm-scripts use the `mnemonic` we used earlier to deploy the smart contracts. Also, make sure that the `collateralToken` is set to the deployed token. Finally, make sure that the `tradingDB` instance is pointed at an instance configured for your tournament. For example:
 
 ```js
 {
@@ -13,7 +14,7 @@ Get the [pm-scripts](https://github.com/gnosis/pm-scripts). We will configure th
     "host": "rinkeby.infura.io",
     "port": "443"
   },
-  "pm-trading-db": {
+  "tradingDB": {
     "protocol": "http",
     "host": "localhost",
     "port": "8001"
@@ -62,7 +63,7 @@ Get the [pm-scripts](https://github.com/gnosis/pm-scripts). We will configure th
 ]
 ```
 
-Then, we use `node lib/main.js deploy` to deploy these markets to the network. These markets will then gain values in `conf/markets.json`:
+Then, we use `npm run deploy` to deploy these markets to the network. These markets will then gain values in `conf/markets.json`:
 
 ```js
 [
@@ -88,26 +89,3 @@ Then, we use `node lib/main.js deploy` to deploy these markets to the network. T
   }
 ]
 ```
-
-## Tournament Operation
-
-In order to allow tournament participants to take part in these markets, you will need to whitelist the `eventAddress` and `marketAddress` values. Go to your smart contract project (`big-token` in this example), and whitelist them with the following script:
-
-```sh
-npm run allow-transfers -- --network=rinkeby --addresses=0xf042bb28f521d02852dcc3635418a5cd7d9ab565,0xcb5f35384e268f37504beb2465c1b8f42be8f414,0xc04f5adc5deba8acb39c0fdf9db0f5ed8cfe270d,0x8bdc656a33ea8ee00e6fb7256bd9ea9e22ea7227
-```
-
-When a market has a winningOutcome, set its `winningOutcome` by editing `markets.json`:
-
-```js
-[
-  {
-    "title": "What will be the median gas price on December 31st, 2018?",
-    ...,
-    "winningOutcome": 0
-  },
-  ...
-]
-```
-
-Then run `node lib/main.js resolve`, which will allow you to resolve those markets with winning outcomes set accordingly.
