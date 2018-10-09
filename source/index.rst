@@ -1,4 +1,4 @@
-.. image:: ./_static/img/gnosis-logo.png
+.. image:: ./_static/img/apollo-logo.png
     :width: 350px
     :align: center
     :alt: Gnosis Apollo
