@@ -159,14 +159,14 @@ async function buyOutcomeTokens() {
 buyOutcomeTokens()
 ```
 This function internally will perform 2-3 transaction, depending if you already convert ETH to WETH or if it uses another token.
-You can check your balance, as in the previous section, by calling: `checkBalances()`
+You can check your balance, as in the previous section, by calling: `checkBalances()`, you will notice that this time, you only have balance for one of the outcome tokens, not for both.
 
 Similarly, you can see how much these outcome tokens are worth to the `market` with `LMSRMarketMaker.calcProfit`
 
 ```js
 async function calcProfit() {
     const profit = await gnosis.lmsrMarketMaker.calcProfit(market.address, 0, 1e18)
-    console.info(`Sell 1 Outcome Token with index 2 gives ${profit.valueOf()/1e18} ETH tokens of profit`)
+    console.info(`Sell 1 Outcome Token with index 0 gives ${profit.valueOf()/1e18} WETH tokens of profit`)
 }
 calcProfit()
 ```
@@ -177,7 +177,7 @@ If you want to sell the outcome tokens you have bought, you can do the following
 async function sellOutcomeTokens() {
     await gnosis.sellOutcomeTokens({
         market,
-        outcomeTokenIndex: 2,
+        outcomeTokenIndex: 0,
         outcomeTokenCount: 1e18,
     })
 }

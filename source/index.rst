@@ -32,6 +32,7 @@ Gnosis Apollo
     pm-js
     pm-js-usage
     pm-js-notes
+    lmsr
 
 .. toctree::
     :maxdepth: 3
