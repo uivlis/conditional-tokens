@@ -48,7 +48,7 @@ Thus, in order to guarantee that a market can operate with a liquidity parameter
 
 $$ b = {F \over \log n} $$
 
-In the Gnosis implementation, the [LMSR market maker contract](https://gnosis-pm-contracts.readthedocs.io/en/latest/LMSRMarketMaker.html) is provided with the `funding` \\(F\\) through inspection of the `market`, and \\(b\\) is derived accordingly.
+In the Gnosis implementation, the [LMSR market maker contract](https://github.com/gnosis/pm-contracts/blob/v1.1.0/contracts/MarketMakers/LMSRMarketMaker.sol) is provided with the `funding` \\(F\\) through inspection of the `market`, and \\(b\\) is derived accordingly.
 
 ## Marginal Price of Outcome Tokens
 
@@ -60,4 +60,4 @@ In the context of prediction markets, this marginal price can also be interprete
 
 ## LMSR Calculation Functions
 
-The functions [Gnosis.calcLMSRCost](api-reference.html#calcLMSRCost) and [Gnosis.calcLMSRProfit](api-reference.html#calcLMSRProfit) estimate the cost of buying outcome tokens and the profit from selling outcome tokens respectively. The [Gnosis.calcLMSROutcomeTokenCount](api-reference.html#calcLMSROutcomeTokenCount) estimates the quantity of an outcome token which can be bought given an amount of collateral and serves as a sort of "inverse calculation" to Gnosis.calcLMSRCost. Finally, [Gnosis.calcLMSRMarginalPrice](api-reference.html#calcLMSRMarginalPrice) can be used to get the marginal price of an outcome token.
+The functions `Gnosis.calcLMSRCost` and `Gnosis.calcLMSRProfit` estimate the cost of buying outcome tokens and the profit from selling outcome tokens respectively. The `Gnosis.calcLMSROutcomeTokenCount` estimates the quantity of an outcome token which can be bought given an amount of collateral and serves as a sort of "inverse calculation" to Gnosis.calcLMSRCost. Finally, `Gnosis.calcLMSRMarginalPrice` can be used to get the marginal price of an outcome token.
