@@ -1,7 +1,7 @@
 # PM-JS usage
 After you import pm-js as a dependency, you can initialize it by calling the method `create` returning a promise. But before doing that, let's install a web3 provider for our tests:
 ```sh
-npm install truffle-hdwallet-provider-privkey ethereumjs-wallet
+npm install 'truffle-hdwallet-provider-privkey' 'ethereumjs-wallet'
 ```
 And generate a random private key for it:
 
@@ -47,7 +47,7 @@ Know we would like to interact with a known market and perform buy/sell operatio
 
 Let's instanciate the market:
 ```javascript
-const market = gnosis.contracts.Market.at("0x5e9fe666935d274d3a85AD961CB1355BB576784B")
+const market = gnosis.contracts.Market.at("0xff737a6cc1f0ff19f9f23158851c37b04979a313")
 ```
 
 You can obtain also it's event contract:
@@ -60,11 +60,11 @@ market.eventContract().then(
 )
 ```
 
-Now we have the market and the event contract instances, we can perform all buy and sell mechanisms. Basically there are two ways of interacting with the prediction market outcome tokens:
-1. Through the market contract and it's automated market maker (LMSR)
-2. Buying all outcome tokens for later on use it with a custom market maker (your own automated market maker, an exchange, etc)
+For reference, all contract instances, will have the contract functions (both read and write operations) you can check which ones directly in the [contract source](https://github.com/gnosis/pm-contracts/blob/v1.1.0/contracts/Markets/StandardMarket.sol). There are also more advanced functions that we will explain later (e.g buy and sell shares).
 
-## Automated market maker
+Now we have the market and the event contract instances, we can perform all buy and sell mechanisms. Basically there are two ways of interacting with the prediction market outcome tokens:
+1. Buying all outcome tokens for later on use it with a custom market maker (your own automated market maker, an exchange, etc)
+2. Through the market contract and it's automated market maker (LMSR)
 
 ## Buy all outcomes
 Buying all outcomes means exchange 1 collateral token (let's say WETH) to 1 Outcome token of each (Outcome Token YES, Outcome Token No for example). With this exchange of tokens you can always go back and exchange those again to collateral token if you use the function Sell All outcomes.
@@ -92,4 +92,25 @@ buyAllOutcomes()
 ```
 
 If you don't see errors in the terminal, the shares should have been bought. You can check your shares balance by executing this command:
+```javascript
+async function checkBalances() {
+    const { Token } = gnosis.contracts
+    const outcomeCount = (await event.getOutcomeCount()).valueOf()
 
+    for(let i = 0; i < outcomeCount; i++) {
+        const outcomeToken = await Token.at(await event.outcomeTokens(i))
+        console.log('Have', (await outcomeToken.balanceOf(gnosis.defaultAccount)).div('1e18').valueOf(), 'units of outcome', i)
+    }
+}
+checkBalances()
+```
+
+You have now two tokens:
+* 0.1 Outcome Token with Index 0
+* 0.1 Outcome Token with Index 1
+
+If you want to exchange it back to WETH, execute:
+```javascript
+
+
+## Automated market maker
