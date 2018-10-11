@@ -90,3 +90,5 @@ We assume you already take a look at [pm-scripts section](/pm-scripts) and under
 ```
 
 And also, as you are using a new account that has admin rights over the token, you need to set up that account in the `config.json`.
+
+Before deploying the markets with `npm run deploy` you should see your Token Balance and validate the market information.
