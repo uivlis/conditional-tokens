@@ -47,6 +47,12 @@ Gnosis Apollo
     pm-trading-ui
     pm-trading-ui-rewards
 
+... toctree::
+    :maxdepth: 0
+    :caption: Tournament Operator Guide
+    
+    tournament-operator
+
 .. * :ref:`genindex`
 .. * :ref:`modindex`
 .. * :ref:`search`
