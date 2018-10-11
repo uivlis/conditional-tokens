@@ -84,7 +84,7 @@ npm run issue-tokens -- --amount 1000e18 --to $CREATOR_ADDRESS --network=rinkeby
 **Note we issued 1000 Tournament tokens, it's in scientific notation. Represents 1000 units with 18 decimals (the default value for decimals)**
 
 ## Deploy Markets with pm-scripts
-We assume you already take a look at [pm-scripts section](/pm-scripts) and understand the usage of the tool. In order to deploy tournament markets you need to modify one more parameter in the `config.json`:
+We assume you already take a look at [pm-scripts section](pm-scripts) and understand the usage of the tool. In order to deploy tournament markets you need to modify one more parameter in the `config.json`:
 ```javascript
 "collateralToken": "<address>" # This is the Tournament Token Contract deployed before.
 ```
@@ -92,3 +92,36 @@ We assume you already take a look at [pm-scripts section](/pm-scripts) and under
 And also, as you are using a new account that has admin rights over the token, you need to set up that account in the `config.json`.
 
 Before deploying the markets with `npm run deploy` you should see your Token Balance and validate the market information.
+
+## TradingDB
+You need to Set up the Indexer following the steps in [tradingdb section](pm-trading-db). As soon as you have set it up there are a few differences to configure it for tournaments. Basically now you have two more contract addresses and also an optional ethereum account (automatic token issuance).
+
+You need to set up the following env params:
+* `TOURNAMENT_TOKEN` Your tournament token contract.
+* `ETHEREUM_DEFAULT_ACCOUNT_PRIVATE_KEY` Optional, ethereum private key of the token creator for automatic issuance.
+* `GENERIC_IDENTITY_MANAGER_ADDRESS` Registry Contract.
+
+There are other options available listed [here](pm-trading-db.html#tournament-token-issuance-olympia-related)
+
+As soon as you configure your backend with these params, we need to create the periodic tasks and start the indexing, you can do it by executing the following command inside one of the containers (or in the root path if you are using a bare metal approach).
+```sh
+docker-compose run web sh
+python manage.py setup_tournament --start-block-number
+```
+
+The command `setup_tournament` will prepare the database and set up periodic tasks:
+  - `--start-block-number` will, if specified, start pm-trading-db processing at a specific block instead of all the way back at the genesis block. You should give it as late a block before tournament events start occurring as you can.
+  - **Ethereum blockchain event listener** every 5 seconds (the main task of the application).
+  - **Scoreboard calculation** every 10 minutes.
+  - **Token issuance** every minute. Tokens will be issued in batches of 50 users (to prevent
+  exceeding the block limitation). A flag will be set to prevent users from being issued again on next
+  execution of the task.
+  - **Token issuance flag clear**. Once a day the token issuance flag will be cleared so users will
+  receive new tokens every day.
+
+All these tasks can be changed in the [application admin](http://localhost:8000/admin/django_celery_beat/periodictask/).
+You will need a superuser:
+
+```
+docker-compose run web sh
+python manage.py createsuperuser
