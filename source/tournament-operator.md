@@ -122,6 +122,92 @@ The command `setup_tournament` will prepare the database and set up periodic tas
 All these tasks can be changed in the [application admin](http://localhost:8000/admin/django_celery_beat/periodictask/).
 You will need a superuser:
 
-```
+```sh
 docker-compose run web sh
 python manage.py createsuperuser
+```
+
+## Trading Interface
+The prediction markets interface doesn't differ in terms of build process, but it does in the configuration. You need to enable the tournament functionality and specify who are the market creators, the tournament token, the registry contract and also how will the reward work (if present).
+```sh
+cd pm-trading-ui
+NODE_ENV=production npm run build
+```
+
+### Configuration Template
+First we need to generate the tournament template by running the command:
+```
+npm run build-config olympia/production
+```
+Adn then modify in `dist/config.js` the following parameters:
+* `whitelist`: should have your market creator address
+* `collateralToken`: Your Tournament Token address
+* `scoreboard`: enabled
+* `gameguide`: enabled
+
+For the format of those parameters check the [interface section](pm-trading-ui.html#tournament-mode)
+
+Now all the code over `dist/` it's ready to be served in your favourite web server.
+## Market Resolution
+Follows the same logic than regular markets. Check the resolution section [here](pm-scripts#resove-markets)
+
+## Reward Claiming
+If your tournament offers a reward for the TOP X in the scoreboard, you can send the reward manually, but maybe it's more practical to do it through the reward claiming contract we implemented, so you only need to perform two transactions, and you establish a time-frame for redeeming. After that timeframe you can claim it back those tokens that were not used.
+
+This contract is part of `pm-apollo-contracts` repo. Anyone can deploy it, and it will be on mainnet, so be sure the account you pass as env parameter have enough ether to deploy the market (<0.1ETH).
+```sh
+cd pm-apollo-contracts
+npx truffle exec scripts/deploy_reward_contract.js --token=<token-address> --network=mainnet
+```
+`token-address` is the token you use as reward for your tournament, can be any ERC20 token (e.g GNO, RDN, OMG...)
+
+### Configure Reward Claiming on the Interface
+Check [this example](pm-trading-ui.html#reward-claiming). You can define the dates from which the claiming will be available that won't be visible until you activate the claiming after the tournament ends.
+
+### Enable Reward Claiming.
+The account that created the contract is the only one that can enable the claiming. 
+For setting it up, we use pm-scripts.
+```sh
+cd pm-scripts
+```
+
+In order to execute the Reward Claim feature the following configuration property must be added to the config.json file.
+It specifies the Reward Claim contract address, the levels property, which defines the respective amount of winnings for each winner in the top X (number of levels in the array) positions from the scoreboard.
+As the Reward Contract could be running on a different chain than the contracts, you have to specify the blockchain property as described below:
+
+```
+  "rewardClaimHandler": {
+    "blockchain": {
+      "protocol": "https",
+      "host": "mainnet.infura.io",
+      "port": "443"
+    },
+    "address": "0x42331cbc7D15C876a38C1D3503fBAD0964a8D72b",
+    "duration": 86400,
+    "decimals": 18,
+    "levels": [
+      { "value": 5, "minRank": 1, "maxRank": 1 },
+      { "value": 4, "minRank": 2, "maxRank": 2 },
+      { "value": 3, "minRank": 3, "maxRank": 3 },
+      { "value": 2, "minRank": 4, "maxRank": 4 },
+      { "value": 1, "minRank": 5, "maxRank": 5 },
+      { "value": 0.9, "minRank": 6, "maxRank": 7 },
+      { "value": 0.8, "minRank": 8, "maxRank": 9 },
+      { "value": 0.7, "minRank": 10, "maxRank": 11 },
+      { "value": 0.6, "minRank": 12, "maxRank": 13 },
+      { "value": 0.5, "minRank": 14, "maxRank": 15 },
+      { "value": 0.4, "minRank": 16, "maxRank": 17 },
+      { "value": 0.3, "minRank": 18, "maxRank": 19 },
+      { "value": 0.2, "minRank": 19, "maxRank": 34 },
+      { "value": 0.1, "minRank": 34, "maxRank": 100 }
+    ]
+  }
+ ```
+
+ **Is important you define well duration (in seconds). This will be the timeframe your users have to redeem their tokens before you get can get back from the contract the remaining tokens.**
+ 
+ To execute the Claim Reward just run the following command:
+ 
+ ```sh
+ npm run claimrewards
+ ```
