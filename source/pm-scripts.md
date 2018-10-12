@@ -1,5 +1,5 @@
 # PM-SCRIPTS
-pm-scripts it's the recommended tool for deploying your prediction markets contracts. It allows to deploy easily in any network all kind of prediction markets even without understanding of what are all the pieces of a prediction market.
+pm-scripts is the recommended tool for deploying your prediction markets contracts. It allows you to deploy all kinds of prediction markets easily in any network even without having a full understanding of what all the pieces of a prediction market are. 
 
 Let's start by getting the [pm-scripts](https://github.com/gnosis/pm-scripts). 
 ```sh
@@ -11,7 +11,7 @@ We will configure the utils in the following way:
 
 ## Configuration
 
-`conf/config.json`: Let's configure the pm-scripts use the `mnemonic` we used earlier to deploy the smart contracts. Also, make sure that the `collateralToken` is set to the deployed token. Finally, make sure that the `tradingDB` instance is pointed at an instance configured for your tournament. For example:
+`conf/config.json`: Let's configure the pm-scripts using the `mnemonic` we used earlier to deploy the smart contracts. Also, make sure that the `collateralToken` is set to the deployed token. Finally, make sure that the `tradingDB` instance is pointed at an instance configured for your tournament. For example:
 
 ```js
 {
@@ -37,12 +37,12 @@ We will configure the utils in the following way:
 }
 ```
 
-* **accountCredential**: This is your wallet credential. Can be either HD wallet mnemonic phrase composed by 12 words ([HD wallet repository](https://github.com/trufflesuite/truffle-hdwallet-provider)) or private key ([HD wallet private key repository](https://github.com/rhlsthrm/truffle-hdwallet-provider-privkey));
-* **credentialType**: is a type of credential you want to use to access your account, available values: `mnemonic`, `privateKey`, default is `privateKey`;
+* **accountCredential**: This is your wallet credential. Can be either an HD wallet mnemonic phrase composed by 12 words ([HD wallet repository](https://github.com/trufflesuite/truffle-hdwallet-provider)) or a private key ([HD wallet private key repository](https://github.com/rhlsthrm/truffle-hdwallet-provider-privkey));
+* **credentialType**: is the type of credential you want to use to access your account, available values: `mnemonic`, `privateKey`, default is `privateKey`;
 * **account**: is your ethereum address, all transactions will be sent from this address. If not provided, pm-scripts will calculate it from your mnemonic phrase;
-* **blockchain**: defines the Ethereum Node pm-scripts should send transactions to (https://rinkeby.infura.io/gnosis/ by default);
+* **blockchain**: defines the Ethereum Node that pm-scripts should send transactions to (https://rinkeby.infura.io/gnosis/ by default);
 * **tradingDB**: defines the [pm-trading-db](pm-trading-db/) url, an Ethereum indexer which exposes a handy API to get your list of markets and their details (default: https://tradingdb.rinkeby.gnosis.pm:443);
-* **ipfs**: sets the IPFS node pm-scripts should send transactions to (https://ipfs.infura.io:5001 by default);
+* **ipfs**: sets the IPFS node that pm-scripts should send transactions to (https://ipfs.infura.io:5001 by default);
 * **gasPrice**: the desired gasPrice
 * **collateralToken**: the Collateral Token contract's address (e.g Ether Token):
   - **Rinkeby:** [0xc778417e063141139fce010982780140aa0cd5ab](https://rinkeby.etherscan.io/address/0xc778417e063141139fce010982780140aa0cd5ab)
@@ -95,11 +95,11 @@ Format must be any recognised by
 [Javascript Date constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date),
 it's recommended to use an ISO date format like *2018-03-27T16:20:11.698Z*.
 
-* **currency**: A text field defining which currency is holding the market's funds. It's informative, just to remind you wich token corresponds the collateral token address.
+* **currency**: A text field defining which currency is holding the market's funds. It's informative, just to remind you wich token corresponds to the collateral token address.
 
-* **fee**: A text field defining the amount of fee held by the market creator.
+* **fee**: A text field defining the amount of fees charged by the market creator.
 
-* **funding**: A text field representing how much funds to provid the market with. (e.g 1e18 == 1 WETH, 1e19 == 10 WETH...)
+* **funding**: A text field representing how much funds to provide the market with. (e.g 1e18 == 1 WETH, 1e19 == 10 WETH...)
 
 * **winningOutcome**: A text field representing the winning outcome. If declared, pm-scripts  will try to resolve the market, but will always ask you to confirm before proceeding.
 
@@ -145,7 +145,7 @@ Then, we use `npm run deploy` to deploy these markets to the network. These mark
 ```
 
 ## Resolve Markets
-pm-scripts it's also used to resolve the outcome of a market. for that end the steps are easy, let's set up the parameter `winningOutcome`:
+pm-scripts is also used to resolve the outcome of a market. For that the steps are easy, let's set up the parameter `winningOutcome`:
 ```javascript
 [
   {
