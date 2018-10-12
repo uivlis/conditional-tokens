@@ -1,5 +1,7 @@
-sphinx
-recommonmark
-sphinx_rtd_theme
 pygments-lexer-solidity
 pygments-json
+sphinx
+sphinx-issues
+sphinx-autobuild
+sphinx_rtd_theme
+recommonmark
