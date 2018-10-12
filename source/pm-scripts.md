@@ -1,7 +1,13 @@
 # PM-SCRIPTS
 pm-scripts it's the recommended tool for deploying your prediction markets contracts. It allows to deploy easily in any network all kind of prediction markets even without understanding of what are all the pieces of a prediction market.
 
-Let's start by getting the [pm-scripts](https://github.com/gnosis/pm-scripts). We will configure the utils in the following way:
+Let's start by getting the [pm-scripts](https://github.com/gnosis/pm-scripts). 
+```sh
+git clone https://github.com/gnosis/pm-scripts
+npm i
+```
+
+We will configure the utils in the following way:
 
 ## Configuration
 
@@ -30,6 +36,19 @@ Let's start by getting the [pm-scripts](https://github.com/gnosis/pm-scripts). W
   "collateralToken": "0x0152b7ed5a169e0292525fb2bf67ef1274010c74"
 }
 ```
+
+* **accountCredential**: This is your wallet credential. Can be either HD wallet mnemonic phrase composed by 12 words ([HD wallet repository](https://github.com/trufflesuite/truffle-hdwallet-provider)) or private key ([HD wallet private key repository](https://github.com/rhlsthrm/truffle-hdwallet-provider-privkey));
+* **credentialType**: is a type of credential you want to use to access your account, available values: `mnemonic`, `privateKey`, default is `privateKey`;
+* **account**: is your ethereum address, all transactions will be sent from this address. If not provided, pm-scripts will calculate it from your mnemonic phrase;
+* **blockchain**: defines the Ethereum Node pm-scripts should send transactions to (https://rinkeby.infura.io/gnosis/ by default);
+* **tradingDB**: defines the [pm-trading-db](pm-trading-db/) url, an Ethereum indexer which exposes a handy API to get your list of markets and their details (default: https://tradingdb.rinkeby.gnosis.pm:443);
+* **ipfs**: sets the IPFS node pm-scripts should send transactions to (https://ipfs.infura.io:5001 by default);
+* **gasPrice**: the desired gasPrice
+* **collateralToken**: the Collateral Token contract's address (e.g Ether Token):
+  - **Rinkeby:** [0xc778417e063141139fce010982780140aa0cd5ab](https://rinkeby.etherscan.io/address/0xc778417e063141139fce010982780140aa0cd5ab)
+  - **Kovan:** [0xd0a1e359811322d97991e03f863a0c30c2cf029c](https://kovan.etherscan.io/address/0xd0a1e359811322d97991e03f863a0c30c2cf029c)
+  - **Ropsten:** [0xc778417e063141139fce010982780140aa0cd5ab](https://ropsten.etherscan.io/address/0xc778417e063141139fce010982780140aa0cd5ab)
+  - **Mainnet:** [0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2](https://etherscan.io/address/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2)
 
 ## Deploy markets
 
@@ -66,6 +85,37 @@ Let's start by getting the [pm-scripts](https://github.com/gnosis/pm-scripts). W
   }
 ]
 ```
+### Params
+* **title**: The title of the market.
+
+* **description**: A text field describing the title of the market.
+
+* **resolutionDate**: Defines when the prediction market ends, you can always resolve a market before its resolutionDate expires.
+Format must be any recognised by
+[Javascript Date constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date),
+it's recommended to use an ISO date format like *2018-03-27T16:20:11.698Z*.
+
+* **currency**: A text field defining which currency is holding the market's funds. It's informative, just to remind you wich token corresponds the collateral token address.
+
+* **fee**: A text field defining the amount of fee held by the market creator.
+
+* **funding**: A text field representing how much funds to provid the market with. (e.g 1e18 == 1 WETH, 1e19 == 10 WETH...)
+
+* **winningOutcome**: A text field representing the winning outcome. If declared, pm-scripts  will try to resolve the market, but will always ask you to confirm before proceeding.
+
+* **outcomeType**: Defines the prediction market type. You must strictly provide 'CATEGORICAL' or 'SCALAR' (categorical market
+or scalar market).
+
+* **upperBound**: (scalar markets) A text field representing the upper bound of the predictions range.
+
+* **lowerBound**: (scalar markets) A text field representing the lower bound of the predictions range.
+
+* **decimals**: (scalar markets) Values are passed in as whole integers and adjusted to the right order of magnitude according to the decimals property of the event description, which is a numeric integer.
+
+* **unit**: (scalar markets) A text field representing the market's unit of measure, like '%' or '°C' etc...
+
+* **outcomes**: (categorical markets) An array of text fields representing the available outcomes for the market.
+
 
 Then, we use `npm run deploy` to deploy these markets to the network. These markets will then gain values in `conf/markets.json`:
 
