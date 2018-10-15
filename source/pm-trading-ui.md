@@ -170,6 +170,8 @@ You can define which collateral token the application should use when interactin
 
 `contractName` - is only required when using `source: "contract"`, defines the name of the contract to be loaded.
 
+`isWrappedEther` - if your collateralToken is a derivative of ETH (WETH), setting this to true will combine this token balance with the users wallet balance. This way we can show a total balance, with already wrapped collateral and wallet balance.
+
 `symbol` - is used to overwrite the symbol. If this is not defined, it will try to use the name of the ERC20 token after loading it.
 
 `icon` - used to display next to the amount of collateral a user has. If not defined, will use a default `ethereum` style icon.
@@ -180,6 +182,7 @@ You can define which collateral token the application should use when interactin
     "source": "contract",
     "options": {
       "contractName": "etherToken",
+      "isWrappedEther": true,
       "symbol": "ETH",
       "icon": "/assets/img/icons/icon_etherTokens.svg"
     }
@@ -336,7 +339,7 @@ You can enable user-badges for your tournament by enabling this feature. It will
   }
 ```
 
-### **WIP**: Thirdparty Services
+### Thirdparty Services
 In order to determine which thirdparty integrations we want to use, we developed a plug-in system for integrations that can be included at a global scope, such as Google Analytics and the Chat Platform Intercom. To see how this was done, [take a look at the code](https://github.com/gnosis/pm-trading-ui/tree/master/src/utils/analytics).
 ```js
   "thirdparty": {
@@ -354,6 +357,17 @@ In order to determine which thirdparty integrations we want to use, we developed
     }
   },
 }
+```
+
+### **WIP**: KYC/AML Customer Verification
+For legal compliancy, we integrated a KYC provider, which can be enabled if necessary. If you're running on the test-net or a private interface, you most likely won't need this.
+```js
+  "verification": {
+    "enabled": true,
+    "handler": "onfido",
+    "options": {
+    }
+  }
 ```
 
 ### Misc Constants
