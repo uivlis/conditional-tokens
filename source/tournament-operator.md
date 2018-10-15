@@ -1,305 +1,213 @@
-# Setup
+# Tournament Operator Guide
+We assume, you have read past sections, and you already know how to operate a Gnosis prediction market platform: create markets, set up tradingdb, host the website and resolve the markets.
+In this section we will explain step by steps what do you need in order to configure your own Prediction Markets Tournament.
 
-In order to run a fresh tournament, you will need to deploy a set of contracts for the tournament. These contracts can be found at the [`pm-apollo-contracts` repository](https://github.com/gnosis/pm-apollo-contracts), or on NPM as `@gnosis.pm/pm-apollo-contracts`.
+# Set up contracts
+## Create Ethereum Accounts
+First of all, we need you to generate at least 2 accounts. Why two? because we need 1 account to issue tokens and other to create markets, and it might happen in parallel, so we need to separate the accounts to avoid nonce collision.
+```sh
+# In case you don't have ganache-cli. This is the main local testnet tool used for ethereum development. By default it creates random private keys and a Mnemonic, that's perfect for creating new accounts in bulk.
 
-You may also wish to configure some parameters for your deployment, or even to modify some things. We will create a new package for these purposes. We will be using NPM for this guide, though it will probably work with EthPM if you adapt it appropriately.
+npm install -g 'ganache-cli'
+ganache-cli
+```
 
-## Unbox a `lil-box`
+By executing this command, you get 10 accounts created, derived by a random mnemonic phrase and all it's related private keys, as you can see in the picture.
+![Account Generation](img/accounts-ganache.png)
 
-Let's say that we want to name the tournament play token "Big Token." We want to be able to work with this token in pm-js and ultimately in the user interface to the tournament. Let's make and enter a directory called `big-token`, where we will prepare a package:
+## Tournament Contracts
+Download the 
+```sh
+git clone https://github.com/gnosis/pm-apollo-contracts.git
+```
+
+Usually you would like to rename the contract from 'OLY' to something related with your project. For that end you just need to change two lines:  
+
+* [token name](https://github.com/gnosis/pm-apollo-contracts/blob/v1.4.1/contracts/OlympiaToken.sol#L9) 
+
+* [token symbol](https://github.com/gnosis/pm-apollo-contracts/blob/v1.4.1/contracts/OlympiaToken.sol#L9)
+
+You can also change the file itself, if you want for example to look with a different names when validating the contract on etherscan, but it's not necessary.
+
+**In case you want to modify deeper the tournament token, the requirements are: It should be ERC20 compliant and also implement the issue function (if you want to use automatic issuance for new users)**
+
+### Deploy
+Set up your private key or mnemonic:
+```sh
+export MNEMONIC='client catch that man dice easily brave either fatal discover welcome tattoo'
+# or export PRIVATEKEY='0xb7e68f153f86ebea910f834bb7488b1d843f782eb8eb12f3482813c69cd6c4aa'
+```
+
+Install dependencies and execute migration:
+```sh
+npm run migrate -- --network=rinkeby
+# If you want to run it again, you need to add the option --reset
+```
+
+This command will deploy 3 contracts:
+* `Truffle migration contract`. Keeps track of the different migrations, in case we add a new step, will go from the last point. Will not reset all the contracts.
+* `Tournament Token`. It's the ERC20 token used by the tournament markets and users.
+* `Address Registry`. It's the contract the users need to register to, in oder to appear in the scoreboard and also get tournament tokens (in case you set up auto-issuance).
+
+### Validate Contracts
+This step is completely optional, but it's a recommended practice, so you are transparent with your users about what the tournament contracts do.
+
+Execute the command: 
+```sh
+npx truffle-flattener contracts/OlympiaToken.sol > ValidateToken.sol
+npx truffle-flattener contracts/AddressRegistry.sol > ValidateRegistry.sol
+```
+
+So, now you should go to etherscan and validate both contracts, in the url `https://rinkeby.etherscan.io/verifyContract2?a=<address>`
+
+being `<address>` the contract address, you can check those with:
+```sh
+npx truffle -- networks
+```
+
+You need to enter:
+1. Contract Name: OlympiaToken or Address Registry
+2. Compiler 0.4.23 commit (you can check it with `npx truffle version`)
+3. Optimization off
+4. Code, the content of `ValidateToken.sol` and `ValidateRegistry.sol` respectively.
+
+### Configure Contracts.
+
+Previously we created a bunch of ethereum accounts to separate nonce of the issuer and market creator and isolate roles. For that end we need to execute 2 transactions through the command line in the pm-contracts project.
 
 ```sh
-mkdir big-token
-cd big-token
+export CREATOR_ADDRESS=<address>
+npm run add-admins -- --addresses=$CREATOR_ADDRESS --network=rinkeby
+npm run issue-tokens -- --amount 1000e18 --to $CREATOR_ADDRESS --network=rinkeby
 ```
 
-We will unbox a Truffle box called [lil-box](https://github.com/gnosis/lil-box) here:
+**Note we issued 1000 Tournament tokens, it's in scientific notation. Represents 1000 units with 18 decimals (the default value for decimals)**
+
+## Deploy Markets with pm-scripts
+We assume you already take a look at [pm-scripts section](pm-scripts) and understand the usage of the tool. In order to deploy tournament markets you need to modify one more parameter in the `config.json`:
+```javascript
+"collateralToken": "<address>" # This is the Tournament Token Contract deployed before.
+```
+
+And also, as you are using a new account that has admin rights over the token, you need to set up that account in the `config.json`.
+
+Before deploying the markets with `npm run deploy` you should see your Token Balance and validate the market information.
+
+## TradingDB
+You need to Set up the Indexer following the steps in [tradingdb section](pm-trading-db). As soon as you have set it up there are a few differences to configure it for tournaments. Basically now you have two more contract addresses and also an optional ethereum account (automatic token issuance).
+
+You need to set up the following env params:
+* `TOURNAMENT_TOKEN` Your tournament token contract.
+* `ETHEREUM_DEFAULT_ACCOUNT_PRIVATE_KEY` Optional, ethereum private key of the token creator for automatic issuance.
+* `GENERIC_IDENTITY_MANAGER_ADDRESS` Registry Contract.
+
+There are other options available listed [here](pm-trading-db.html#tournament-token-issuance-olympia-related)
+
+As soon as you configure your backend with these params, we need to create the periodic tasks and start the indexing, you can do it by executing the following command inside one of the containers (or in the root path if you are using a bare metal approach).
+```sh
+docker-compose run web sh
+python manage.py setup_tournament --start-block-number
+```
+
+The command `setup_tournament` will prepare the database and set up periodic tasks:
+  - `--start-block-number` will, if specified, start pm-trading-db processing at a specific block instead of all the way back at the genesis block. You should give it as late a block before tournament events start occurring as you can.
+  - **Ethereum blockchain event listener** every 5 seconds (the main task of the application).
+  - **Scoreboard calculation** every 10 minutes.
+  - **Token issuance** every minute. Tokens will be issued in batches of 50 users (to prevent
+  exceeding the block limitation). A flag will be set to prevent users from being issued again on next
+  execution of the task.
+  - **Token issuance flag clear**. Once a day the token issuance flag will be cleared so users will
+  receive new tokens every day.
+
+All these tasks can be changed in the [application admin](http://localhost:8000/admin/django_celery_beat/periodictask/).
+You will need a superuser:
 
 ```sh
-truffle unbox gnosis/lil-box
+docker-compose run web sh
+python manage.py createsuperuser
 ```
 
-## Initialize Git and NPM
-
-Make a Git repo here if desired:
-
+## Trading Interface
+The prediction markets interface doesn't differ in terms of build process, but it does in the configuration. You need to enable the tournament functionality and specify who are the market creators, the tournament token, the registry contract and also how will the reward work (if present).
 ```sh
-git init
-git add .
-git commit -m "Initial commit"
+cd pm-trading-ui
+NODE_ENV=production npm run build
 ```
 
-You may create a repo on Github if desired:
+### Configuration Template
+First we need to generate the tournament template by running the command:
+```
+npm run build-config olympia/production
+```
+Adn then modify in `dist/config.js` the following parameters:
+* `whitelist`: should have your market creator address
+* `collateralToken`: Your Tournament Token address
+* `scoreboard`: enabled
+* `gameguide`: enabled
 
-![Repo creation screen](./_static/img/make-github.png)
+For the format of those parameters check the [interface section](pm-trading-ui.html#tournament-mode)
 
+Now all the code over `dist/` it's ready to be served in your favourite web server.
+## Market Resolution
+Follows the same logic than regular markets. Check the resolution section [here](pm-scripts#resove-markets)
+
+## Reward Claiming
+If your tournament offers a reward for the TOP X in the scoreboard, you can send the reward manually, but maybe it's more practical to do it through the reward claiming contract we implemented, so you only need to perform two transactions, and you establish a time-frame for redeeming. After that timeframe you can claim it back those tokens that were not used.
+
+This contract is part of `pm-apollo-contracts` repo. Anyone can deploy it, and it will be on mainnet, so be sure the account you pass as env parameter have enough ether to deploy the market (<0.1ETH).
 ```sh
-git remote add origin git@github.com:cag/big-token.git
-git push -u origin master
+cd pm-apollo-contracts
+npx truffle exec scripts/deploy_reward_contract.js --token=<token-address> --network=mainnet
 ```
+`token-address` is the token you use as reward for your tournament, can be any ERC20 token (e.g GNO, RDN, OMG...)
 
-Then let's complete the [NPM](https://www.npmjs.com/) `package.json` setup:
+### Configure Reward Claiming on the Interface
+Check [this example](pm-trading-ui.html#reward-claiming). You can define the dates from which the claiming will be available that won't be visible until you activate the claiming after the tournament ends.
 
-```
-$ npm init
-This utility will walk you through creating a package.json file.
-It only covers the most common items, and tries to guess sensible defaults.
-
-See `npm help json` for definitive documentation on these fields
-and exactly what they do.
-
-Use `npm install <pkg>` afterwards to install a package and
-save it as a dependency in the package.json file.
-
-Press ^C at any time to quit.
-package name: (big-token) 
-...
-```
-
-## Specify the Contracts
-
-Install `@gnosis.pm/pm-apollo-contracts` as a dependency:
-
+### Enable Reward Claiming.
+The account that created the contract is the only one that can enable the claiming. 
+For setting it up, we use pm-scripts.
 ```sh
-npm i @gnosis.pm/pm-apollo-contracts
+cd pm-scripts
 ```
 
-Then create a contract in `contracts/` called `BigToken.sol` (you are free to name this as you wish):
-
-```sol
-pragma solidity ^0.4.21;
-
-import "@gnosis.pm/pm-apollo-contracts/contracts/PlayToken.sol";
-
-contract BigToken is PlayToken {
-    string public constant name = "Big Token";
-    string public constant symbol = "BIG";
-    uint8 public constant decimals = 18;
-}
-
-import "@gnosis.pm/pm-apollo-contracts/contracts/AddressRegistry.sol";
-```
-
-In our example, we are keeping the functionality of the [PlayToken](https://github.com/gnosis/pm-apollo-contracts) the same, but you are free to modify the token however you'd like. Also note that we set the `name`, `symbol` and `decimal` fields which are optional [ERC20](https://theethereum.wiki/w/index.php/ERC20_Token_Standard) fields, but also highly recommended for correct interoperability with the frontend. Finally, make sure to set the `decimal` field to 18, matching the format of ether.
-
-We also import the [AddressRegistry](https://github.com/gnosis/pm-apollo-contracts) so that we can deploy our own copy of that registry for our users.
-
-## Do a Compilation Test
-
-Try compiling the contract:
+In order to execute the Reward Claim feature the following configuration property must be added to the config.json file.
+It specifies the Reward Claim contract address, the levels property, which defines the respective amount of winnings for each winner in the top X (number of levels in the array) positions from the scoreboard.
+As the Reward Contract could be running on a different chain than the contracts, you have to specify the blockchain property as described below:
 
 ```
-$ npm run truffle compile
+  "rewardClaimHandler": {
+    "blockchain": {
+      "protocol": "https",
+      "host": "mainnet.infura.io",
+      "port": "443"
+    },
+    "address": "0x42331cbc7D15C876a38C1D3503fBAD0964a8D72b",
+    "duration": 86400,
+    "decimals": 18,
+    "levels": [
+      { "value": 5, "minRank": 1, "maxRank": 1 },
+      { "value": 4, "minRank": 2, "maxRank": 2 },
+      { "value": 3, "minRank": 3, "maxRank": 3 },
+      { "value": 2, "minRank": 4, "maxRank": 4 },
+      { "value": 1, "minRank": 5, "maxRank": 5 },
+      { "value": 0.9, "minRank": 6, "maxRank": 7 },
+      { "value": 0.8, "minRank": 8, "maxRank": 9 },
+      { "value": 0.7, "minRank": 10, "maxRank": 11 },
+      { "value": 0.6, "minRank": 12, "maxRank": 13 },
+      { "value": 0.5, "minRank": 14, "maxRank": 15 },
+      { "value": 0.4, "minRank": 16, "maxRank": 17 },
+      { "value": 0.3, "minRank": 18, "maxRank": 19 },
+      { "value": 0.2, "minRank": 19, "maxRank": 34 },
+      { "value": 0.1, "minRank": 34, "maxRank": 100 }
+    ]
+  }
+ ```
 
-> big-token@2.0.0 truffle /path/to/big-token
-> truffle "compile"
-
-Compiling ./contracts/BigToken.sol...
-
-[Some more stuff...]
-
-Writing artifacts to ./build/contracts
-```
-
-## Create Migration Scripts
-
-We have two build artifacts in `./build/contracts` in which we are currently interested: `BigToken.json` and `AddressRegistry.json`. We need the contracts these correspond with to be deployed, and we need these artifacts to contain that deployment information. First, we create a migration script to deploy these contracts in the `migrations` folder as `2_deploy_contracts.js`:
-
-```js
-module.exports = function(deployer) {
-  ["BigToken", "AddressRegistry"].forEach(c =>
-    deployer.deploy(artifacts.require(c))
-  );
-};
-```
-
-This will cause Truffle to deploy these contracts as part of its migration process. Try this deployment out in the Truffle development environment:
-
-```
-$ npm run truffle develop
-
-[Truffle does some setup and opens a command line. You will want to run 'migrate' in the shell:]
-
-truffle(develop)> migrate
-Using network 'develop'.
-
-Running migration: 1_initial_migration.js
-  Deploying Migrations...
-  ... 0xeba4f9cc757161d91adce5cf4aaed5441b49beac76f994470da6920d54877c4a
-  Migrations: 0x8cdaf0cd259887258bc13a92c0a6da92698644c0
-Saving successful migration to network...
-  ... 0xd7bc86d31bee32fa3988f1c1eabce403a1b5d570340a3a9cdba53a472ee8c956
-Saving artifacts...
-Running migration: 2_deploy_contracts.js
-  Deploying BigToken...
-  ... 0x473828664dd2dba56bd5e789e20b300ad3a2a295b43dd62c026d2141572cbcd1
-  BigToken: 0x345ca3e014aaf5dca488057592ee47305d9b3e10
-  Deploying AddressRegistry...
-  ... 0xd7edc0e525eda0641b157c4b7fb4bf5b1338d44207c3900934e8307d777c276d
-  AddressRegistry: 0xf25186b5081ff5ce73482ad761db0eb0d25abfbf
-Saving successful migration to network...
-  ... 0x059cf1bbc372b9348ce487de910358801bbbd1c89182853439bec0afaee6c7db
-Saving artifacts...
-truffle(develop)> 
-```
-
-If you've done this before, `migrate` might fail. In that case, try `migrate --reset` instead. Also, after running that command, you can see that there is deployment information about the test migration recorded in the artifacts:
-
-```
-$ npm run truffle networks
-
-> big-token@2.0.0 truffle /path/to/big-token
-> truffle "networks"
-
-
-Network: UNKNOWN (id: 4447)
-  AddressRegistry: 0xf25186b5081ff5ce73482ad761db0eb0d25abfbf
-  BigToken: 0x345ca3e014aaf5dca488057592ee47305d9b3e10
-  Migrations: 0x8cdaf0cd259887258bc13a92c0a6da92698644c0
-```
-
-If that worked, we're ready to deploy this on a public test network.
-
-## Deploy Contracts on the Testnet
-
-For the purpose of this guide, let's suppose that we wish to deploy the contracts on [Rinkeby](https://www.rinkeby.io/#stats).
-
-[With that in mind, follow this deployment guide](https://gnosis.github.io/lil-box/deployment-guide.html) and run the migration process on the Rinkeby testnet.
-
-Make sure that the network information has been extracted into `networks.json` via `npm run extractnetinfo`. Also, make sure that the build artifacts contain only the information necessary via `npm run resetnetinfo`. You can check the information in the build artifacts via `npm run truffle networks`:
-
-```
-> truffle "networks"
-
-
-Network: rinkeby (id: 4)
-  AddressRegistry: 0xd3515609e3231d6c5b049a28d0d09d038b4cfaed
-  BigToken: 0x0152b7ed5a169e0292525fb2bf67ef1274010c74
-  Migrations: 0xf0681a06da32b8276b0a7b685019056c2bcfbf13
-```
-
-## Prepare Package Entry Point
-
-By default, `index.js` is set as the entry point of the package. We will export the most pertinent build artifacts in this entry point:
-
-```js
-module.exports = {
-  AddressRegistry: require("./build/contracts/AddressRegistry.json"),
-  BigToken: require("./build/contracts/BigToken.json")
-};
-```
-
-Let's verify that this works by attempting to import this in a Node shell:
-
-```
-$ node
-> require('.')
-{ AddressRegistry: 
-
-  [lots of stuff here...] }
-> 
-```
-
-## Extra Scripts
-
-Let's add a few scripts to the `package.json`:
-
-```js
-    "issue-tokens": "truffle exec './node_modules/@gnosis.pm/pm-apollo-contracts/scripts/issue_tokens.js' --play-token-name=BigToken",
-    "add-admins": "truffle exec './node_modules/@gnosis.pm/pm-apollo-contracts/scripts/add_admins.js' --play-token-name=BigToken",
-    "remove-admins": "truffle exec './node_modules/@gnosis.pm/pm-apollo-contracts/scripts/remove_admins.js' --play-token-name=BigToken",
-    "allow-transfers": "truffle exec './node_modules/@gnosis.pm/pm-apollo-contracts/scripts/allow_transfers.js' --play-token-name=BigToken",
-    "disallow-transfers": "truffle exec './node_modules/@gnosis.pm/pm-apollo-contracts/scripts/disallow_transfers.js' --play-token-name=BigToken"
-```
-
-These will let us issue BigToken, designate admins, and whitelist market and event contracts. See [here](https://github.com/gnosis/pm-apollo-contracts#operations-overview) for more details. For example, the following issues 100 SYM (the symbol for BigToken) to the address 0x873faa4cddd5b157e8e5a57e7a5479afc5d30f0b:
-
-```
-npm run issue-tokens -- --network rinkeby issue-tokens --amount 100e18 --to 0x873faa4cddd5b157e8e5a57e7a5479afc5d30f0b
-```
-
-## Ship it!
-
-Our package should be ready now! Before we ship it, let's do `npm pack` to see what will get published. You will see the `prepack` script run, and then a tarball named `[name]-[version].tgz` will be created. Let's verify the contents of what we will be publishing:
-
-```
-$ tar -tf big-token-2.0.0.tgz 
-package/package.json
-package/.eslintrc.js
-package/.prettierignore
-package/.travis.yml
-package/index.js
-package/LICENSE
-package/networks.json
-package/README.md
-package/truffle.js
-package/build/contracts/AddressRegistry.json
-package/build/contracts/BigToken.json
-package/build/contracts/Math.json
-package/build/contracts/Migrations.json
-package/build/contracts/PlayToken.json
-package/build/contracts/Proxied.json
-package/build/contracts/Proxy.json
-package/build/contracts/StandardToken.json
-package/build/contracts/StandardTokenData.json
-package/build/contracts/Token.json
-package/contracts/BigToken.sol
-package/contracts/Migrations.sol
-package/migrations/1_initial_migration.js
-package/migrations/2_deploy_contracts.js
-package/scripts/extract_network_info.js
-package/scripts/inject_network_info.js
-```
-
-If everything looks good, let's publish it!
-
-```text
-$ npm publish
-
-> big-token@2.0.0 prepack .
-> eslint . && npm run fmtsrc && truffle compile && npm run resetnetinfo
-
-
-> big-token@2.0.0 fmtsrc /path/to/big-token
-> prettier --write "**/*.{js,json}"
-
-.eslintrc.js 46ms
-index.js 3ms
-migrations/1_initial_migration.js 6ms
-migrations/2_deploy_contracts.js 5ms
-scripts/extract_network_info.js 16ms
-scripts/inject_network_info.js 12ms
-truffle-local.js 5ms
-truffle.js 9ms
-
-> big-token@2.0.0 resetnetinfo /path/to/big-token
-> truffle networks --clean && node scripts/inject_network_info.js
-
-+ big-token@2.0.0
-```
-
-(By the way, `big-token` is taken, so find your own name ;)
-
-
-## Tournament Operation
-
-In order to allow tournament participants to take part in these markets, you will need to whitelist the `eventAddress` and `marketAddress` values. Go to your smart contract project (`big-token` in this example), and whitelist them with the following script:
-
-```sh
-npm run allow-transfers -- --network=rinkeby --addresses=0xf042bb28f521d02852dcc3635418a5cd7d9ab565,0xcb5f35384e268f37504beb2465c1b8f42be8f414,0xc04f5adc5deba8acb39c0fdf9db0f5ed8cfe270d,0x8bdc656a33ea8ee00e6fb7256bd9ea9e22ea7227
-```
-
-When a market has a winningOutcome, set its `winningOutcome` by editing `markets.json`:
-
-```js
-[
-  {
-    "title": "What will be the median gas price on December 31st, 2018?",
-    ...,
-    "winningOutcome": 0
-  },
-  ...
-]
-```
-
-Then run `node lib/main.js resolve`, which will allow you to resolve those markets with winning outcomes set accordingly.
+ **Is important you define well duration (in seconds). This will be the timeframe your users have to redeem their tokens before you get can get back from the contract the remaining tokens.**
+ 
+ To execute the Claim Reward just run the following command:
+ 
+ ```sh
+ npm run claimrewards
+ ```

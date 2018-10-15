@@ -4,7 +4,7 @@
     :alt: Gnosis Apollo
     :class: gnosis-logo
 
-Gnosis Apollo is a collection of packages that allows anyone to roll your own *Gnosis Prediction Market Interface* or *Gnosis Olympia*.
+Gnosis Apollo is a collection of packages that allows you to roll your own *Prediction Market Interface* or *Prediction Market Tournament* based on the Gnosis Prediction Market Framework.
 
 It consists of the `pm-contracts`, `pm-js`, `pm-trading-db` and `pm-trading-ui`. 
 
@@ -46,6 +46,12 @@ Gnosis Apollo
 
     pm-trading-ui
     pm-trading-ui-rewards
+
+.. toctree::
+    :maxdepth: 0
+    :caption: Tournament Operator Guide
+    
+    tournament-operator
 
 .. * :ref:`genindex`
 .. * :ref:`modindex`

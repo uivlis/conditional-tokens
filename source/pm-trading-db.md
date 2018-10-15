@@ -141,6 +141,9 @@ Here you have a list of all the possible parameters you can set as ENV parameter
 ### MARKET_FACTORY
 `ethereum checksum address` - Market factory contract. You can check the default addresses for each network [here](https://unpkg.com/@gnosis.pm/pm-contracts@1.1.0/networks.json)
 
+### GENERIC_IDENTITY_MANAGER_ADDRESS (Olympia related)
+`ethereum checksum address` - Registry address contract, you need to deploy it by yourself. Will be the registry for new users of a tournament.
+
 ### TOURNAMENT_TOKEN (Olympia related)
 `ethereum checksum address` - Represents the [Olympia token](https://github.com/gnosis/pm-apollo-contracts/blob/master/contracts/OlympiaToken.sol) used for tournament (use 0x0000000000000000000000000000000000000001 if you want to disable it)
 
