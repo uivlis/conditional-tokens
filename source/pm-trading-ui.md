@@ -5,7 +5,7 @@ First, [clone the interface from github](https://github.com/gnosis/pm-trading-ui
 
 ## Setup
 
-Run `npm i` to install all dependencies. Now you can already start the application like such: `NODE_ENV=development npm start` and it will run a local webpack server that you can test on.
+Run `npm i` to install all dependencies. Now you can already start the application like such: `NODE_ENV=development npm start` and it will run a local webpack server on which you can test.
 
 In order to build a production version, run `NODE_ENV=production npm build` and it will create a `/dist` folder that will be filled with a minified and bundled interface application.
 
