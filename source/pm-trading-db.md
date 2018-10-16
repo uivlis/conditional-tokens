@@ -83,12 +83,43 @@ kubectl apply -f kubernetes/tradingdb
 ```
 
 ## Bare metal
-TradingDB it's a python 3.6 project, if you are 
+TradingDB it's a **Python 3.6/Django 2** project, so you can set up the application without *Docker*.
+
+You will need installed an running:
+* Redis: Tasks management.
+* PostgreSQL: As the database. Create a database for the project.
+
+Then you will need **Python 3.6**, and it's recommended to have [virtualenv](https://virtualenv.pypa.io/en/stable/) for the dependencies:
+```bash
+git clone git@github.com:gnosis/pm-trading-db.git
+cd pm-trading-db
+virtualenv pm-trading-db
+pip install -r requirements.txt
+```
+
+Configure `.env_bare_local` with parameters for connecting to PostgreSQL and Redis. You can use Infura for Ethereum node and IPFS:
+```bash
+DATABASE_URL=psql://user:password@localhost:5432/database_name
+REDIS_URL=redis://localhost/0
+CELERY_BROKER_URL=redis://localhost/0
+ETHEREUM_NODE_URL=https://rinkeby.infura.io/YOUR_INFURA_TOKEN
+IPFS_HOST=https://ipfs.infura.io
+IPFS_PORT=5001
+```
+
+Then run:
+```bash
+python manage.py migrate
+python manage.py setup_tournament --start-block-number 2000000
+./run_bare_metal.sh
+```
+
+Tradingdb should be up and running on [http://0.0.0.0:8000](http://0.0.0.0:8000)
 
 # Configuration Parameters
-In the project you will find some configuration templates for different environments. These are in `config/settings/`
+In the project you will find some configuration templates for different environments. These are in `config/settings/`:
 * `base.py` As the name says, it's the base of all the config parameters, has the common configurations and the default values.
-* `ganache.py` You should use this config when testing with [ganache-cli](https://github.com/trufflesuite/ganache-cli) running `ganache-cli -d`
+* `ganache.py` You should use this config when testing with [ganache-cli](https://github.com/trufflesuite/ganache-cli) running `ganache-cli -d`.
 * `production.py` Disables the debug settings and is oriented to be use on mainnet (or a testnet for running an olympia tournament).
 * `rinkeby.py` Has configured the default addresses for rinkeby and also for one of the Olympia tournaments [Gnosis run](https://blog.gnosis.pm/announcing-gnosis-olympia-dappcon-edition-be44643a046e), as an example.
 * `test.py` Used by tests.
