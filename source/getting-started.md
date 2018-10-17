@@ -1,6 +1,6 @@
 # Getting Started
 
-We are going to explain the minimum steps to have a prediction market deployed on a testnet and being able to interact with it through our trading interface.
+We are going to explain the minimum steps to have a prediction market deployed on a testnet and be able to interact with it through our trading interface.
 
 ## Requirements
 * [Nodejs >= 7](https://nodejs.org/en/)
@@ -15,7 +15,7 @@ git clone https://github.com/gnosis/pm-scripts
 cd pm-scripts
 npm i
 ````
-You need to modify `conf/config.json` and use an ethereum account you own with ether. [check the rinkeby faucet](https://faucet.rinkeby.io/)
+You need to modify `conf/config.json` and use an ethereum account you own which has ether. [check the rinkeby faucet](https://faucet.rinkeby.io/)
 
 You can use this config:
 ```json
@@ -42,16 +42,16 @@ You can use this config:
    "collateralToken":"0xd19bce9f7693598a9fa1f94c548b20887a33f141"
 }
 ```
-**Please note that we are using a TEST ACCOUNT, don't use it with real funds or in production. Create another account with metamask, ganache-cli or any available ethereum wallet provider**
+**Please note that we are using a TEST ACCOUNT in the example above. Don't use this account specified above with real funds or in production. Create another account for yourself with metamask, ganache-cli or any available ethereum wallet provider**
 
-You can use the example market `pm-scripts/examples/categoricalMarket.json` or modify it's content. **Be careful with the date format** or it won't be indexed by the backend service.
+You can use the example market `pm-scripts/examples/categoricalMarket.json` or modify its content. **Be careful with the date format**. Otherwise it won't be indexed by the backend service.
 
 Run the creation command:
 ```sh
 npm run deploy -- -m examples/categoricalMarket.json -w 1e18
 ```
 
-This will create all the contracts related with a prediction market, [wrap ether](https://weth.io/) for you and fund the market with the WETH.
+This will create all the contracts related to a prediction market, [wrap ether](https://weth.io/) for you and fund the market with the WETH.
 
 Follow the instructions that `pm-script` prompts in the console until the end.
 
@@ -70,19 +70,19 @@ It will take a few minutes to complete, depending on your network connection and
 
 Finally you will have the service running and a web server listening on [http://localhost:8000/](http://localhost:8000/) , you can see here the documentation of the different endpoints that our trading interface uses.
 
-By default the indexer points to the rinkeby network through [Infura nodes](https://infura.io/). Indexing a full chain can take a few hours consuming all nodes resources, but we don't need to index all the blockchain, we just need to index since the block in which was included our prediction market contracts.
+By default the indexer points to the rinkeby network through [Infura nodes](https://infura.io/). Indexing a full chain can take a few hours consuming all nodes resources, but we don't need to index all of the blockchain. We just need the indexing to start since the block which includes our prediction market contracts.
 
-If you created the market just now, you can substract a few blocks from the current one, go to [etherscan](https://rinkeby.etherscan.io/) substract 100 blocks (that's around 20min of blocks) and execute:
+If you created the market just now, you can substract a few blocks from the current block. Go to [etherscan](https://rinkeby.etherscan.io/) substract 100 blocks (that's around 20min of blocks) and execute:
 ```
 docker-compose run web python manage.py setup --start-block-number <your-block-number>
 ```
 
-This will start the indexing of the rinkeby chain and should take a few seconds. You now should see your market indexed in [http://localhost:8000/api/markets/](http://localhost:8000/api/markets/)
+This will start the indexing of the rinkeby chain and should take a few seconds. You should now see your market indexed in [http://localhost:8000/api/markets/](http://localhost:8000/api/markets/)
 
-**Note: the default configuration points to infura and is very light in terms of performance so the service is not rate limited. For production settings use `DJANGO_SETTINGS_MODULE=config.settings.production`**
+**Note: the default configuration points to infura and is very light in terms of performance so the service is not rate limited. For production settings, use `DJANGO_SETTINGS_MODULE=config.settings.production`**
 
 ## Setup the interface
-The trading-ui interface offers a generic interface to interact with prediction markets and is intented to be used as the starting point for extending it for your use case.
+The trading-ui interface offers a generic interface to interact with prediction markets and is intended to be used as the starting point which can be extended for your use case.
 Let's start downloading and installing the project:
 ```
 git clone https://github.com/gnosis/pm-trading-ui
@@ -90,7 +90,7 @@ cd pm-trading-ui
 docker-compose build --force-rm
 ```
 
-Now the interface it's already functional, but we need to configure it with our ethereum account as whitelisted, in order to show the markets in the interface.
+Now the interface is already functional, but we need to configure it with our ethereum account as a whitelisted account, in order to show the markets in the interface.
 Let's build the config template:
 ```
 docker-compose run web npm run build-config
