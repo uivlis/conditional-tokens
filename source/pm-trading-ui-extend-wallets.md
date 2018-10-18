@@ -70,8 +70,8 @@ export default new SuperSecureWallet()
 A few things are missing now, add your integration to the integration-exporter in `/src/integrations/index.js`
 ```js
 ...
-import { WALLET_PROVIDER } from './constants
-import SuperSecureWallet from './supersecurewallet`
+import { WALLET_PROVIDER } from './constants'
+import SuperSecureWallet from './supersecurewallet'
 ...
 
 const providers = {
