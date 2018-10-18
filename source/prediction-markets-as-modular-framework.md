@@ -1,5 +1,5 @@
 # Prediction markets as a modular framework
-Apollo aims to provide the foundational protocol upon which projects using prediction markets can grow. 
+Our modular framework aims to provide the foundational protocol upon which projects using prediction markets can grow. 
 In this section we describe the different layers that compose the prediction markets framework.
 
 ## Trading UI
