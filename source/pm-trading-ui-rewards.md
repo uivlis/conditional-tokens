@@ -2,6 +2,8 @@
 
 In order to allow tournament recipients to claim a reward of some ERC20 token, an instance of the `RewardClaimHandler` may be deployed, and that information must be relayed to the frontend.
 
+## Deploying `RewardClaimHandler` using MyEtherWallet
+
 To do so, you will need an account with actual Ether. We will use [MyEtherWallet](https://www.myetherwallet.com/#contracts) to do this deployment. For the purpose of this guide, we will issue rewards on the Kovan network, though you will almost certainly wish to use the public main network.
 
 First we must deploy the contract `RewardClaimHandler` contract with MEW. You can find the bytecode in the `@gnosis.pm/pm-apollo-contracts` project in the build artifact `build/contracts/RewardClaimHandler.json` under the `bytecode` key, but this is reproduced for your convenience below:
@@ -18,7 +20,147 @@ Then add the reward token address at the end, padded left to 64 hex characters (
 
 Then deploy the contract. Once your contract is deployed, you should have an address. Let's say that address is `0x9720939c16665529dEaBE608bC3cA72509297F79`
 
-Then, specify the `RewardClaimHandler` address along with additional parameters as `rewardClaiming.claimReward.contractAddress` in your configuration (note we are using Kovan's networkId in this example):
+## Deploying `RewardClaimHandler` using Truffle and pm-apollo-contracts
+
+First, clone the [pm-apollo-contracts repo](https://github.com/gnosis/pm-apollo-contracts):
+```
+git clone https://github.com/gnosis/pm-trading-ui.git
+```
+
+Install the dependencies:
+```
+npm i
+```
+
+Make sure you have truffle installed globally, you can run `truffle version` in your terminal to check, if it says "command not found" or similar, install truffle by executing this command:
+```
+npm i -g truffle
+```
+
+Configuring the project for deployment is covered in this [guide](https://gnosis.github.io/lil-box/deployment-guide.html), in this part we'll cover the configuration very briefly as we expect you  have it already prepared when you were going through previous parts of this guide.
+
+Let's assume that our `RewardClaimHandler` will be deployed to the Rinkeby Test Network. In the real life example the contract should be probably deployed to the Mainnet, the idea is the same except you'd have to replace node url and change network name/id
+
+Create `truffle-local.js` file inside the root directory, and copy paste the content:
+
+
+### If you want to use a private key
+
+```js
+const Provider = require('truffle-privatekey-provider')
+
+const accountCredential = 'Your private key'
+
+const config = {
+  networks: {
+    rinkeby: {
+      provider: new Provider(accountCredential, 'https://rinkeby.infura.io'),
+      network_id: '4',
+    },
+  },
+}
+
+module.exports = config
+```
+
+__Important!__ For using private key as an account credential, we'll need a package called `truffle-privatekey-provider`, you can install it by running this command in your terminal:
+
+```
+npm i truffle-privatekey-provider
+```
+
+### Or if you want to use a mnemonic phrase
+
+```js
+const Provider = require('truffle-hdwallet-provider')
+
+const accountCredential = 'Your mnemonic phrase'
+
+const config = {
+  networks: {
+    rinkeby: {
+      provider: new Provider(accountCredential, 'https://rinkeby.infura.io'),
+      network_id: '4',
+    },
+  },
+}
+
+module.exports = config
+```
+
+Replace `accountCredential` variable with a credential of your choose: private key or a mnemonic phrase. Don't forget that network's name and id has to be changed too if you want to deploy a contract to a different network.
+
+Now, when you are done with the configuration, you need to run the following command:
+```
+npx truffle exec scripts/deploy_reward_contract.js --token=<token-address> --network=<your-network>
+```
+
+__Important!__ Don't forget to replace <token-address> with the address of a token you are going to use to reward your winners and <your-network> with your desired network's name. Token Contract and RewardClaimHandler have to be on the same network.
+
+After running the command, you should get the following output (an example):
+```
+> npx truffle exec scripts/deploy_reward_contract.js --token=0x1a5f9352af8af974bfc03399e3767df6370d82e4 --network=rinkeby
+Using network 'rinkeby'.
+
+RewardClaimHandler: 0x79f32a252bb4b370e5a4a37f34e6ff0e1acc52bf
+Transaction hash: 0xa2694e3924137116e59501cf54d5fa24e2432ae052e11d40cbfe93b689861870
+```
+
+Save RewardClaimHandler address you got, you'll need it in the next section.
+
+
+## Filling the contracts with winners and prize amounts
+
+For this section, we're assuming that you already have correct configuration for `pm-scripts`. If you haven't used it, please first go to [pm-scripts](/pm-scripts) section of this documentation.
+
+So, inside pm-scripts root directory, go to `conf/config.json` file. Now, you need to add `rewardClaimHandler` key to the json and configure it. You can use this example as a reference:
+```json
+  "rewardClaimHandler": {
+    "blockchain": {
+      "protocol": "https",
+      "host": "node.rinkeby.gnosisdev.com",
+      "port": "443"
+    },
+    "address": "0x42331cbc7D15C876a38C1D3503fBAD0964a8D72b",
+    "duration": 86400,
+    "decimals": 18,
+    "levels": [
+      { "value": 5, "minRank": 1, "maxRank": 1 },
+      { "value": 4, "minRank": 2, "maxRank": 2 },
+      { "value": 3, "minRank": 3, "maxRank": 3 },
+      { "value": 2, "minRank": 4, "maxRank": 4 },
+      { "value": 1, "minRank": 5, "maxRank": 5 },
+      { "value": 0.9, "minRank": 6, "maxRank": 7 },
+      { "value": 0.8, "minRank": 8, "maxRank": 9 },
+      { "value": 0.7, "minRank": 10, "maxRank": 11 },
+      { "value": 0.6, "minRank": 12, "maxRank": 13 },
+      { "value": 0.5, "minRank": 14, "maxRank": 15 },
+      { "value": 0.4, "minRank": 16, "maxRank": 17 },
+      { "value": 0.3, "minRank": 18, "maxRank": 19 },
+      { "value": 0.2, "minRank": 19, "maxRank": 34 },
+      { "value": 0.1, "minRank": 34, "maxRank": 100 }
+    ]
+  }
+```
+
+Let's go through configurations options.
+
+- __blockchain__ - an Ethereum node URL for RewardClaimHandler contract
+- __address__ - RewardClaimHandler's contract address. You should've saved it in previous section
+- __duration__ - duration of reward claiming period in seconds, starting from the time you put data to the contract. Immutable after registering the rewards
+- __decimals__ - Amount of decimals token reward contract uses
+- __levels__ - Array which represents ranks and reward values. You can check the format in example configuration above. You can just copy-paste it from your interface configuration
+
+After you're done with the configuration, just run this in your terminal:
+```
+node lib/main.js claimrewards
+```
+
+After the execution of this command you're done with smart contracts work, now let's configure the interface.
+
+## Configuring the interface
+
+Here are an example config of rewards section in the interface config:
 
 ```js
 {
@@ -60,148 +202,29 @@ Then, specify the `RewardClaimHandler` address along with additional parameters 
 }
 ```
 
-Be aware that the `levels` key will show up on the scoreboard and signal to the players what their anticipated reward should be. Be sure that you have enough of the reward to offer!
+Let's go through options here:
 
-### Post-tournament Reward Handling
+* __rewardClaiming__
+  * __enabled__ - If enabled, then the interface will show a reward claiming box on scoreboard page
+  * __claimReward__
+    * __enabled__ - If enabled, then the interface will check if the current date is between `claimStart` and `claimUntil` and if it is, then the reward claiming process will be active. It was done because in some cases you'd want to sent the rewards manually instead of a contract.
+    * __claimStart__ - Start date of reward claiming
+    * __claimUntil__ - End date of reward claiming
+    * __contractAddress__ - Address of previously deployed RewardClaimHandler
+    * __networkId__ - RewardClaimHandler's network id
+* __rewards__
+  * __enabled__ - If enabled, interface will show reward amount and an address the user will get the rewards to on scoreboard page
+  * __rewardToken__
+    * __symbol__ - Reward token symbol
+    * __contractAddress__ - Address of a reward token you want to use
+    * __networkId__ = Reward token's network id
+  * __levels__  - Array of objects which represents ranks and reward values, each object should contain three properties:
+    * __value__ - Reward amount value in ETH. So if a token contract uses X decimals, the amount of tokens a user will get is __value__ * 10^X
+    * __minRank__ - Minimum suitable rank for the reward
+    * __maxRank__ - Maximum suitable rank for the reward, inclusive
 
-When the tournament is over, you may use MEW to distribute the rewards to the players. To do so, first you must [approve](https://theethereum.wiki/w/index.php/ERC20_Token_Standard#Approve_And_TransferFrom_Token_Balance) the `RewardClaimHandler` the total amount of the reward token to send as a reward, as the `RewardClaimHandler` will attempt to `transferFrom` you that amount.
+Be aware that the `levels` key will show up on the scoreboard and signal to the players what their anticipated reward should be. Be sure that you have enough of the reward to offer!    
 
-Afterwards, you may interact with your contract, using the `RewardClaimHandler` ABI which can also be found in the build artifact mentioned earlier in this section. Here is the ABI copied for convenience:
+The best way to handle the reward claiming is to configure everything at the tournament start except `rewardClaiming.claimReward`, just keep it disabled. Then, when reward claiming start itself, deploy and fill the contract, enable claimReward via runtime config or change the config and deploy a new version of the interface.
 
-```js
-[
-  {
-    "constant": true,
-    "inputs": [
-      {
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "rewardAmounts",
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "operator",
-    "outputs": [
-      {
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "guaranteedClaimEndTime",
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
-      {
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "winners",
-    "outputs": [
-      {
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "rewardToken",
-    "outputs": [
-      {
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "name": "_rewardToken",
-        "type": "address"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "_winners",
-        "type": "address[]"
-      },
-      {
-        "name": "_rewardAmounts",
-        "type": "uint256[]"
-      },
-      {
-        "name": "duration",
-        "type": "uint256"
-      }
-    ],
-    "name": "registerRewards",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [],
-    "name": "claimReward",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [],
-    "name": "retractRewards",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  }
-]
-```
 
-You must call `registerRewards`. When calling that function, specify a list of the tournament winners' **mainnet addresses** (or in this example case, Kovan addresses), and their corresponding winning amounts, as well as a duration in seconds for claiming the reward. This duration should match the tournament configuration.
