@@ -1,5 +1,5 @@
 # Prediction markets as a modular framework
-The prediction markets platform that Gnosis offers aims to provide the foundational protocol upon which many projects will grow using prediction markets as one small piece or a as a core part of their projects.
+Apollo aims to provide the foundational protocol upon which projects using prediction markets can grow. 
 In this section we describe the different layers that compose the prediction markets framework.
 
 ## Trading UI
@@ -7,13 +7,13 @@ The generic interface to interact with prediction markets is trading-ui, a javas
 
 
 ## Ethereum Indexer
-Discovering data in ethereum is complex and depending on the use case it might be even impossible.
-The "standard way" to query bulk data in ethereum is through [filters](https://github.com/ethereum/wiki/wiki/JavaScript-API#web3ethfilter) this is very convenient for discovering ERC20 tx's during a certain period, or the creation of a Multisig contract through a certain factory, but imagine you want something more complex like: Get all markets created by certain ethereum address that use a specific token.
-To get this information completely from ethereum, you will need to get all [MarketCreation events](https://github.com/gnosis/pm-contracts/blob/v1.1.0/contracts/Markets/StandardMarketFactory.sol#L27) and then query all the relations: Market -> Event -> Oracle -> IPFS
+Discovering data in ethereum is complex or potentially even impossible depending on the use case.
+The "standard way" to query bulk data in ethereum is through [filters](https://github.com/ethereum/wiki/wiki/JavaScript-API#web3ethfilter) this is very convenient for discovering ERC20 tx's during a certain period, or the creation of a Multisig contract through a certain factory, but imagine you want something more complex. For instance, what if you wanted to obtain all markets created by a certain ethereum address that use a specific token.
+To get this information, you will need to get all [MarketCreation events](https://github.com/gnosis/pm-contracts/blob/v1.1.0/contracts/Markets/StandardMarketFactory.sol#L27) and then query all the relations: Market -> Event -> Oracle -> IPFS
 
-In practice this is `O(n^4)` and with many P2P network connections, might work with a few values, but as soon as you create markets, it will be unusable.
+In practice this is `O(n^4)` and with many P2P network connections, it might work with a few values. But as soon as you create markets, it will be unusable.
 
-For this reason we have created an Ethereum Indexer called TradingDB a micro-service Python project that queries ethereum nodes and allows powerful queries to be run in milliseconds.
+For this reason we have created an Ethereum Indexer called TradingDB. It's a micro-service Python project that queries ethereum nodes and allows powerful queries to be run in milliseconds.
 
 This is the basic architecture:
 ![TradingDB Architecture](img/tradingdb-diagram.jpg)
@@ -21,7 +21,7 @@ This is the basic architecture:
 ## Javascript Library
 If you want to go deeper and integrate with the ethereum blockchain, our javascript library `pm-js` is the middleware between the Smart Contracts and your program. It abstracts away some of the logic related to prediction markets and adds some useful features like validation.
 
-You can directly use the contracts with web3, and it could be more intuitive for you but will be harder to perform buy and sell operations. Also, web3 won't validate your parameters so you will have to be careful with the values you use or there will be many failing transactions.
+You can directly use the contracts with web3, and it could be more intuitive for you but will be harder to perform buy and sell operations. Also, web3 won't validate your parameters. So it is important to exercise caution with the values you use or there will be many failing transactions.
 
 
 ## Smart Contracts
