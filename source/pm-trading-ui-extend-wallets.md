@@ -70,17 +70,16 @@ export default new SuperSecureWallet()
 A few things are missing now, add your integration to the integration-exporter in `/src/integrations/index.js`
 ```js
 ...
+import { WALLET_PROVIDER } from './constants
 import SuperSecureWallet from './supersecurewallet`
 ...
 
-const providersInstances = [SuperSecureWallet, Metamask, Parity, Remote]
-```
-
-Please note that the `tournament` feature flag only uses select wallets. If you require a different wallet in your tournament, please update the section following:
-```js
-...
-if (tournament) {
-  ...
+const providers = {
+  [WALLET_PROVIDER.SUPERSECUREWALLET]: SuperSecureWallet,
+  [WALLET_PROVIDER.METAMAS]: Metamask,
+  [WALLET_PROVIDER.PARITY]: Parity,
+  [WALLET_PROVIDER.REMOTE]: Remote
+}
 ```
 
 The provider constants are defined in `/src/integrations/constants.js`:
