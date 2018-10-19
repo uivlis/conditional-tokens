@@ -16,7 +16,7 @@ pm-js refers to Truffle contract build artifacts found in `node_modules/@gnosis.
 
 ### Ganache-cli and private chain providers
 
-[Ganache-cli](https://github.com/trufflesuite/ganache-cli) is a JSON RPC provider which is designed to ease developing Ethereum dapps. It can be used in tandem with pm-js as well, but its use requires some setup. Since Ganache-cli randomly generates a network ID and begins the Ethereum VM in a blank state, the contract suite would need to be deployed, and the deployed contract addresses recorded in the build artifacts before use with Ganache-cli. This can be done by running the migration script in the core contracts package directory.
+[Ganache-cli](https://github.com/trufflesuite/ganache-cli) is a JSON RPC provider which is designed to ease Ethereum dapp development. It can be used in tandem with pm-js as well, but its use requires some setup. Since Ganache-cli randomly generates a network ID and begins the Ethereum VM in a blank state, the contract suite would need to be deployed, and the deployed contract addresses recorded in the build artifacts before use with Ganache-cli. This can be done by running the migration script in the core contracts package directory.
 
 ```sh
 (cd node_modules/\@gnosis.pm/pm-contracts/ && truffle migrate)
