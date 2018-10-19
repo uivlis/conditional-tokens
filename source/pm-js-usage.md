@@ -34,8 +34,8 @@ Gnosis.create(
 // note that gnosis is NOT guaranteed to be initialized outside the callback scope here
 ```
 Create parameters:	
-* `ethereum` (string|Provider) – An instance of a Web3 provider or a URL of a Web3 HTTP provider. If not specified, Web3 provider will be either the browser-injected Web3 (Mist/MetaMask) or an HTTP provider looking at http://localhost:8545
-* `defaultAccount` (string) – The account to use as the default from address for ethereum transactions conducted through the Web3 instance. If unspecified, will be the first account found on Web3. See Gnosis.setWeb3Provider defaultAccount parameter for more info.
+* `ethereum` (string|Provider) – An instance of a Web3 provider or a URL of a Web3 HTTP provider. If not specified, the Web3 provider will be either the browser-injected Web3 (Mist/MetaMask) or an HTTP provider looking at http://localhost:8545
+* `defaultAccount` (string) – The account to use as the default from address for ethereum transactions conducted through the Web3 instance. If unspecified, it will be the first account found on Web3. See Gnosis.setWeb3Provider defaultAccount parameter for more info.
 * `ipfs` (Object) – ipfs-mini configuration object
 * * `ipfs.host` (string) – IPFS node address
 * * `ipfs.port` (Number) – IPFS protocol port
@@ -43,14 +43,14 @@ Create parameters:
 * logger (function) – A callback for logging. Can also provide ‘console’ to use console.log.
 
 
-Know we would like to interact with a known market and perform buy/sell operations.
+Now we would like to interact with a known market and perform buy/sell operations.
 
-Let's instanciate the market:
+Let's instansiate the market:
 ```javascript
 const market = gnosis.contracts.Market.at("0xff737a6cc1f0ff19f9f23158851c37b04979a313")
 ```
 
-You can obtain also it's event contract:
+You can also obtain it's event contract:
 ```javascript
 let event
 market.eventContract().then(
@@ -60,14 +60,14 @@ market.eventContract().then(
 )
 ```
 
-For reference, all contract instances, will have the contract functions (both read and write operations) you can check which ones directly in the [contract source](https://github.com/gnosis/pm-contracts/blob/v1.1.0/contracts/Markets/StandardMarket.sol). There are also more advanced functions that we will explain later (e.g buy and sell shares).
+For reference, all contract instances, will have the contract functions (for both read and write operations) you can check which ones in the [contract source](https://github.com/gnosis/pm-contracts/blob/v1.1.0/contracts/Markets/StandardMarket.sol). There are also more advanced functions that we will explain later (e.g buy and sell shares).
 
-Now we have the market and the event contract instances, we can perform all buy and sell mechanisms. Basically there are two ways of interacting with the prediction market outcome tokens:
+Now we have the market and the event contract instances, so we can perform all buy and sell mechanisms. Basically there are two ways of interacting with the prediction market outcome tokens:
 1. Buying all outcome tokens for later on use it with a custom market maker (your own automated market maker, an exchange, etc)
 2. Through the market contract and it's automated market maker (LMSR)
 
 ## Buy all outcomes
-Buying all outcomes means exchange 1 collateral token (let's say WETH) to 1 Outcome token of each (Outcome Token YES, Outcome Token No for example). With this exchange of tokens you can always go back and exchange those again to collateral token if you use the function Sell All outcomes.
+Buying all outcomes means exchanging 1 collateral token (let's say WETH) for 1 of each Outcome token (Outcome Token YES, Outcome Token No for example). With this exchange of tokens you can always go back and exchange those again to collateral token if you use the function Sell All outcomes.
 
 For all prediction markets we use ERC20 tokens, and because of this, all contract interaction needs to have an explicit approval of the tokens over the contract before you can actually buy/sell.
 
@@ -91,7 +91,7 @@ async function buyAllOutcomes() {
 buyAllOutcomes()
 ```
 
-If you don't see errors in the terminal, the shares should have been bought. You can check your shares balance by executing this command:
+If you don't see errors in the terminal, the shares should be bought. You can check your balance by executing this command:
 ```javascript
 async function checkBalances() {
     const { Token } = gnosis.contracts
@@ -134,9 +134,9 @@ withdrawWETH()
 ```
 
 ## Automated market maker
-The "normal" way to interact with prediction markets in Gnosis, it's trough it's [LMSR automated market maker](/lmsr). Basically the market maker it's the one that sets the outcome price based on the demand. It's a [zero-sum game](https://en.wikipedia.org/wiki/Zero-sum_game) where the potential money you can earn it's due to a pontential loss of other party.
+The "normal" way to interact with prediction markets in Gnosis is through the [LMSR automated market maker](/lmsr). Basically the market maker sets the outcome price based on the demand. It's a [zero-sum game](https://en.wikipedia.org/wiki/Zero-sum_game) where the potential money you can earn is directly related to the loss of another party.
 
-The automated market maker operates trough the market contract, and can be accessed individually to check market prices:
+The automated market maker operates through the market contract, and can be accessed individually to check market prices:
 ```javascript
 async function calcCost() {
     const cost = await gnosis.lmsrMarketMaker.calcCost(market.address, 0, 1e18)
@@ -145,7 +145,7 @@ async function calcCost() {
 calcCost()
 ```
 
-Let's say now that you've decided that these outcome tokens are worth it. pm-js contains convenience functions for buying and selling outcome tokens from a market backed by an LMSR market maker. They are buyOutcomeTokens and sellOutcomeTokens. To buy these outcome tokens, you can use the following code:
+Let's say now that you've decided that these outcome tokens are worth purchasing. pm-js contains convenience functions for buying and selling outcome tokens from a market backed by an LMSR market maker. They are buyOutcomeTokens and sellOutcomeTokens. To buy these outcome tokens, you can use the following code:
 
 ```js
 async function buyOutcomeTokens() {
@@ -158,8 +158,8 @@ async function buyOutcomeTokens() {
 }
 buyOutcomeTokens()
 ```
-This function internally will perform 2-3 transaction, depending if you already convert ETH to WETH or if it uses another token.
-You can check your balance, as in the previous section, by calling: `checkBalances()`, you will notice that this time, you only have balance for one of the outcome tokens, not for both.
+This function will internally perform 2-3 transaction, depending on if you already convert ETH to WETH or if it uses another token.
+You can check your balance, as in the previous section, by calling: `checkBalances()`, you will notice that this time, you only have a balance for one of the outcome tokens, not for both.
 
 Similarly, you can see how much these outcome tokens are worth to the `market` with `LMSRMarketMaker.calcProfit`
 
