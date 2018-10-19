@@ -1,12 +1,12 @@
 # Trading DB
 
-We described in a [previous section](prediction-markets-as-modular-framework.html#ethereum-indexer) the benefits of having an ethereum indexer over the classical approach of quering directly the blockchain.
-In this section we will cover the differnt ways of executing it, configurations and more advanced scennarios where you will need to modify our indexer to fit with your custom smart contract modules and all the different configuration parameters available.
+In a [previous section](prediction-markets-as-modular-framework.html#ethereum-indexer) we described the benefits of having an ethereum indexer over the conventional approach of quering directly the blockchain.
+In this section we will cover the differnt ways of execution, configurations and more advanced scennarios where you will need to modify our indexer to fit with your custom smart contract modules and other available configuration parameters.
 
-TradingDB is a python project based on [django](https://www.djangoproject.com/) and [celery](http://www.celeryproject.org/) that follows an architecture of micro-services, with 3 main components: the web API, a scheduler (producer) and worker (consumer). These 3 componentes use a message queu to communicate, by default we use Redis and also a Relational database (we recommend postgresql).
-There are other external services needed as and ethereum node (depending on the use case you could use infura) and an IPFS node (you can use infura for this).
+TradingDB is a python project based on [django](https://www.djangoproject.com/) and [celery](http://www.celeryproject.org/) that follows an architecture of micro-services, with 3 main components: the web API, a scheduler (producer) and worker (consumer). These 3 componentes use a message queue to communicate, by default we use Redis and also a Relational database (we recommend postgresql).
+There are other external services that will be used, like an ethereum node (depending on the use case you could use infura) and an IPFS node (you can use infura for this).
 
-There are many ways of executing this software, but mainly those are 4:
+There are many ways we could execute this software but we will cover the 4 most common:
 * [Docker-compose](#docker-compose)
 * Docker
 * Container Orchestrator. e.g Kubernetes
@@ -15,7 +15,7 @@ There are many ways of executing this software, but mainly those are 4:
 ## Docker-compose
 [docker-compose](https://docs.docker.com/compose/) is a a tool for defining and running multi-container Docker applications and link the dependencies between them. You can see it as tool for managing micro-service and container projects as monoliths, to make the execution easier for development.
 
-If you take a look at our [docker-compose.yml](https://github.com/gnosis/pm-trading-db/blob/master/docker-compose.yml) we have defined many services inside, like the postgresql database and the redis cache. This makes the onboarding very easy, everything you need to do is running two commands.
+We've defined many services inside our [docker-compose.yml](https://github.com/gnosis/pm-trading-db/blob/master/docker-compose.yml), such as the postgresql database and  redis cache. This makes the onboarding very simple. You just need to run two commands: 
 ```
 docker-compose build
 docker-compose up
@@ -39,7 +39,7 @@ Basically you will need to run a different command for each piece:
 * Scheduler: `docker/web/celery/scheduler/run.sh` [code](https://github.com/gnosis/pm-trading-db/blob/v1.7.3/docker/web/celery/scheduler/run.sh)
 * Worker: `docker/web/celery/worker/run.sh` [code](https://github.com/gnosis/pm-trading-db/blob/v1.7.3/docker/web/celery/worker/run.sh)
 
-Running it directly with docker will mean you need to manage restarts, failures and connections. Take a look at the configuration section to know which parameters do you need to pass from environment.
+Running it directly with docker will mean you need to manage restarts, failures and connections. Take a look at the configuration section to know which parameters you'll need from the environment.
 
 ## Kubernetes
 [Kubernetes](https://kubernetes.io/) is one of the most robust solutions for container orchestration and is what **we recommend for production** of TradingDB.
@@ -64,15 +64,15 @@ kubectl create secret generic tradingdb-database \
 
 ### Queue and Cache
 We use [Redis](https://redis.io/) as message broker for Celery (handles the different tasks messages as indexing, issuing tokens, etc) and also as the cache service.
-You can apply it in your cluster by:
+You can apply it in your cluster with:
 ```
 kubectl apply -f kubernetes/redis-tradingdb
 ```
 By default this creates a deployment and a service in kubernetes. You should not need further configuration for this part.
 
 ### TradingdDB services
-As we explained in the previous section, tradingdDB follows a microservice architecture, and it's core is formed by 3 services: `worker, scheduler and web API`. In order to deploy these services there are a minimum of configuration parameters you need to set up like:
-* Ethereum node URL (by default points to infura, in production you should have an ethereum node that supports many requests per second). Besides what you would think, the interface with better performance is the RPC API (over Webservices or IPC sockets). This is because we can batch requests in the same HTTP connection and the underliying implementation of ethereum nodes it's more efficient for the RPC API.
+As we explained in the previous section, tradingdDB follows a microservice architecture, and it's core is formed by 3 services: `worker, scheduler and web API`. In order to deploy these services there are a minimum of configuration parameters you need to set up, inclduing:
+* Ethereum node URL (by default points to infura, in production you should have an ethereum node that supports many requests per second). Despite what you might think, the RPC API interface has better performance (relative to Webservices or IPC sockets). This is because we can batch requests in the same HTTP connection and the underliying implementation of ethereum nodes it's more efficient for the RPC API.
 * DJANGO_SECRET_KEY this parameter secures your sessions with the admin interface (/admin). In a UNIX environment you can generate a random string with this command: `head /dev/urandom | shasum -a 512`
 
 There are many more parameters we describe in the [configuration section](/tradingdb-configuration).
@@ -85,7 +85,7 @@ kubectl apply -f kubernetes/tradingdb
 ## Bare metal
 TradingDB it's a **Python 3.6/Django 2** project, so you can set up the application without *Docker*.
 
-You will need installed an running:
+You will need to install and run the following:
 * Redis: Tasks management.
 * PostgreSQL: As the database. Create a database for the project.
 
@@ -97,7 +97,7 @@ virtualenv pm-trading-db
 pip install -r requirements.txt
 ```
 
-Configure `.env_bare_local` with parameters for connecting to PostgreSQL and Redis. You can use Infura for Ethereum node and IPFS:
+Configure `.env_bare_local` with parameters for connecting to PostgreSQL and Redis. You can use Infura for the Ethereum node and IPFS:
 ```bash
 DATABASE_URL=psql://user:password@localhost:5432/database_name
 REDIS_URL=redis://localhost/0
@@ -118,10 +118,10 @@ Tradingdb should be up and running on [http://0.0.0.0:8000](http://0.0.0.0:8000)
 
 # Configuration Parameters
 In the project you will find some configuration templates for different environments. These are in `config/settings/`:
-* `base.py` As the name says, it's the base of all the config parameters, has the common configurations and the default values.
+* `base.py` As the name says, it's the base of all the config parameters. It has the common configurations and the default values.
 * `ganache.py` You should use this config when testing with [ganache-cli](https://github.com/trufflesuite/ganache-cli) running `ganache-cli -d`.
 * `production.py` Disables the debug settings and is oriented to be use on mainnet (or a testnet for running an olympia tournament).
-* `rinkeby.py` Has configured the default addresses for rinkeby and also for one of the Olympia tournaments [Gnosis run](https://blog.gnosis.pm/announcing-gnosis-olympia-dappcon-edition-be44643a046e), as an example.
+* `rinkeby.py` Has configured the default addresses for rinkeby and also for one of the Olympia tournaments [Gnosis ran](https://blog.gnosis.pm/announcing-gnosis-olympia-dappcon-edition-be44643a046e) as an example.
 * `test.py` Used by tests.
 
 Here you have a list of all the possible parameters you can set as ENV parameter (not all configs allows to override by ENV).
@@ -137,10 +137,10 @@ Here you have a list of all the possible parameters you can set as ENV parameter
 `int` - amount of blocks saved for rollbacks (chain reorgs). It's 100 by default.
 
 ### ETH_PROCESS_BLOCKS 
-`int` - number of blocks processed as bulk for the indexer every time an indexing task is triggered (by default every 500ms). Increasing this value will mean "maybe" the indexing will be faster, but that will also depend on the cpu, memory and network resources. There will be many RPC requests and you might kill you ethereum node instance ^^.
+`int` - number of blocks processed as bulk for the indexer every time an indexing task is triggered (by default every 500ms). Increasing this value will "maybe" mean the indexing will be faster, but that will also depend on the cpu, memory and network resources. There will be many RPC requests and you might kill your ethereum node instance.
 
 ### ETH_FILTER_MAX_BLOCKS 
-`int` - follows the same concept than the previous parameter but with the difference that instead of performing pulling of ethereum logs, it uses ethereum filters. Ethereum filters are used for the first sync as those are faster for synchronizing historic data.
+`int` - follows the same concept than the previous parameter. But instead pulling ethereum logs, it uses ethereum filters. Ethereum filters are used for the first sync as those are faster for synchronizing historic data.
 
 ### ETHEREUM_NODE_URL (mandatory in production)
 `protocol://host:port` - The RPC endpoint of your ethereum node.
@@ -197,7 +197,7 @@ There are many reason why you would like to extend the project, the main one is 
 ## Implement Python event receiver
 With custom event receivers you will be able to listen for events on your own contracts. Custom event receivers can be set up in **pm-trading-db** extending `django_eth_events.chainevents.AbstractEventReceiver` and then defining methods:
   - `save(decoded_event, block_info)`: Will process events when received. `block_info` will have the [web3 block structure](https://web3py.readthedocs.io/en/stable/web3.eth.html#web3.eth.Eth.getBlock) of the ethereum block where the event is found.
-  - `rollback(decoded_event, block_info)`: Will process events in case of reorg. The event will be the same that in `save`, so you decide how to rollback the changes (in case that's needed).
+  - `rollback(decoded_event, block_info)`: Will process events in case of reorg. The event will be the same as the one in `save`, so you can decide how to rollback the changes (if needed).
 
 Every `decoded_event` has `address` and `name`, and then decoded params under `params` key. `address` is always lowercase without `0x`. Example of event:
 ```js
@@ -241,9 +241,11 @@ class TestEventReceiver(AbstractEventReceiver):
 ```
 
 ## Add contract ABI
-If you want to listen events for your **own contract**, you need to add the **json ABI** to **tradingdb/chainevents/abis/** folder to make pm-trading-db capable of decoding the events.
+If you want to listen to events for your **own contract**, you need to add the **json ABI** to **tradingdb/chainevents/abis/** folder to make pm-trading-db capable of decoding the events.
 
-Then you need to configure your receiver before starting **pm-tradingdb** for the first time. Go to **config/settings/olympia.py** and add your event receiver as a Python dictionary. Required fields are:
+Then you need to configure your receiver before starting **pm-tradingdb** for the first time. Go to **config/settings/olympia.py** and add your event receiver as a Python dictionary. 
+
+Required fields are:
   - **ADDRESSES**: List addresses of the contracts to be watched for events. If you need to watch one single address, use a one element list.
   - **EVENT_ABI**: ABI of your custom contract (used to decode the events).
   - **EVENT_DATA_RECEIVER**: Absolute python import path for the custom event receiver class.
