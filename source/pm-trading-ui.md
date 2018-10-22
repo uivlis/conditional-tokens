@@ -13,7 +13,7 @@ But first let's configure the interface:
 
 ## Configuration
 
-The *pm-trading-ui* uses a **runtime configuration** so that we have the ability to deploy changes to configuration at runtime. It works by having a default *fallback* configuration, and multiple different environments and configuration files.
+The *pm-trading-ui* uses a **runtime configuration** so that we have the ability to deploy changes to the configuration at runtime. It works by having a default *fallback* configuration, and multiple different environments and configuration files.
 
 Let's look at a practical example, let's say we want to setup an automated "staging" or pre-production environment. For this example I'll use our mainnet configuration example:
 
@@ -37,7 +37,7 @@ Now, let's build and deploy our application. First, we need to create the `/dist
 In order to copy the configuration file, we prepared a script that will copy and prepare the configuration file automatically. 
 `node ./scripts/configuration.browser.js mainnet/staging`
 
-`configuration.browser.js` is a simply script to copy, minify and add a crucial `window.__GNOSIS_CONFIG__=` snippet infront of your JSON config (as you can't embed JSON as script files in HTML)
+`configuration.browser.js` is a simple script to copy, minify and add a crucial `window.__GNOSIS_CONFIG__=` snippet in front of your JSON config (as you can't embed JSON as script files in HTML)
 
 After this step, your application is ready to be run. Deploy your application to your filehoster of choice and access the page - the previously mentioned `config.js` will be used to determine the configuration, at runtime.
 
@@ -84,7 +84,7 @@ A quick rundown of all configuration entries, their meanings and their possible 
 ```
 
 ### Gas Price Calculation
-In order to display the cost of transactions, we require an external gas-estimation service. Multiple different ones are availble, [ETHGasstation](https://ethgasstation.info) is the default but you can also define your own ([take a look at the code](https://github.com/gnosis/pm-trading-ui/blob/master/src/api/gasPrice.js#L16)).
+In order to display the cost of transactions, we require an external gas-estimation service. Multiple different ones are available, [ETHGasstation](https://ethgasstation.info) is the default but you can also define your own ([take a look at the code](https://github.com/gnosis/pm-trading-ui/blob/master/src/api/gasPrice.js#L16)).
 
 
 `external.url` - the API url from which to fetch the gas price information
@@ -117,7 +117,7 @@ The object keys define the allowed addresses, the values (currently unused) are 
 ```
 
 ### Logo and Favicon
-This property defines which icons the interface should use for differenct screensizes and as a favicon. All paths are defines from the root of the /src folder
+This property defines which icons the interface should use for different screensizes and as a favicon. All paths are defined from the root of the /src folder
 
 ```js
   "logo": {
@@ -191,7 +191,7 @@ You can define which collateral token the application should use when interactin
 
 ### Wallet Integrations
 
-There are multiple different built-in providers that can be used with the interface. The most tested provider is metamask. [Take a look at the code in order to build your own.](https://github.com/gnosis/pm-trading-ui/tree/master/src/integrations). Currently the following providers are available: `parity`, `metamask`, `remote`, `uport`. All providers are always available, as long as the correct network is used.
+There are multiple different built-in providers that can be used with the interface. The most tested provider is metamask. [Take a look at the code in order to build your own.](https://github.com/gnosis/pm-trading-ui/tree/master/src/integrations) Currently, the following providers are available: `parity`, `metamask`, `remote`, `uport`. All providers are always available, as long as the correct network is used.
 
 `default` - defines which provider to use when multiple providers were found, or if no provider was found to tell the user which provider is recommended to interact with the application.
 
@@ -339,8 +339,8 @@ You can enable user-badges for your tournament by enabling this feature. It will
   }
 ```
 
-### Thirdparty Services
-In order to determine which thirdparty integrations we want to use, we developed a plug-in system for integrations that can be included at a global scope, such as Google Analytics and the Chat Platform Intercom. To see how this was done, [take a look at the code](https://github.com/gnosis/pm-trading-ui/tree/master/src/utils/analytics).
+### Third party Services
+In order to determine which third party integrations we want to use, we developed a plug-in system for integrations that can be included at a global scope, such as Google Analytics and the Chat Platform Intercom. To see how this was done, [take a look at the code](https://github.com/gnosis/pm-trading-ui/tree/master/src/utils/analytics).
 ```js
   "thirdparty": {
     "googleAnalytics": {
@@ -360,7 +360,7 @@ In order to determine which thirdparty integrations we want to use, we developed
 ```
 
 ### **WIP**: KYC/AML Customer Verification
-For legal compliancy, we integrated a KYC provider, which can be enabled if necessary. If you're running on the test-net or a private interface, you most likely won't need this.
+For legal compliance, we integrated a KYC provider, which can be enabled if necessary. If you're running on the test-net or a private interface, you most likely won't need this.
 ```js
   "verification": {
     "enabled": true,
