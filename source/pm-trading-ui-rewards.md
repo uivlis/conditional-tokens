@@ -1,10 +1,10 @@
 # Tournament Reward Claiming
 
-In order to allow tournament recipients to claim a reward of some ERC20 token, an instance of the `RewardClaimHandler` may be deployed, and that information must be relayed to the frontend.
+In order to allow tournament recipients to claim an ERC20 token reward, an instance of the `RewardClaimHandler` may must deployed, and that information must be relayed to the frontend.
 
 ## Deploying `RewardClaimHandler` using MyEtherWallet
 
-To do so, you will need an account with actual Ether. We will use [MyEtherWallet](https://www.myetherwallet.com/#contracts) to do this deployment. For the purpose of this guide, we will issue rewards on the Kovan network, though you will almost certainly wish to use the public main network.
+To do so, you will need an account with actual Ether. We will use [MyEtherWallet](https://www.myetherwallet.com/#contracts). For the purpose of this guide, we will issue rewards on the Kovan network, though you will almost certainly wish to use the public main network.
 
 First we must deploy the contract `RewardClaimHandler` contract with MEW. You can find the bytecode in the `@gnosis.pm/pm-apollo-contracts` project in the build artifact `build/contracts/RewardClaimHandler.json` under the `bytecode` key, but this is reproduced for your convenience below:
 
@@ -37,7 +37,7 @@ Make sure you have truffle installed globally, you can run `truffle version` in 
 npm i -g truffle
 ```
 
-Configuring the project for deployment is covered in this [guide](https://gnosis.github.io/lil-box/deployment-guide.html), in this part we'll cover the configuration very briefly as we expect you  have it already prepared when you were going through previous parts of this guide.
+Configuring the project for deployment is covered in this [guide](https://gnosis.github.io/lil-box/deployment-guide.html), in this part we'll cover the configuration very briefly as we expect that you already have it already prepared when you were going through previous parts of this guide.
 
 Let's assume that our `RewardClaimHandler` will be deployed to the Rinkeby Test Network. In the real life example the contract should be probably deployed to the Mainnet, the idea is the same except you'd have to replace node url and change network name/id
 
@@ -88,7 +88,7 @@ const config = {
 module.exports = config
 ```
 
-Replace `accountCredential` variable with a credential of your choose: private key or a mnemonic phrase. Don't forget that network's name and id has to be changed too if you want to deploy a contract to a different network.
+Replace `accountCredential` variable with a credential of your choice. So either a private key or a mnemonic phrase. Don't forget that network's name and id has to be changed too if you want to deploy a contract to a different network.
 
 Now, when you are done with the configuration, you need to run the following command:
 ```
@@ -106,7 +106,7 @@ RewardClaimHandler: 0x79f32a252bb4b370e5a4a37f34e6ff0e1acc52bf
 Transaction hash: 0xa2694e3924137116e59501cf54d5fa24e2432ae052e11d40cbfe93b689861870
 ```
 
-Save RewardClaimHandler address you got, you'll need it in the next section.
+Save the RewardClaimHandler address you got, you'll need it in the next section.
 
 
 ## Filling the contracts with winners and prize amounts
@@ -148,7 +148,7 @@ Let's go through configurations options.
 - __blockchain__ - an Ethereum node URL for RewardClaimHandler contract
 - __address__ - RewardClaimHandler's contract address. You should've saved it in previous section
 - __duration__ - duration of reward claiming period in seconds, starting from the time you put data to the contract. Immutable after registering the rewards
-- __decimals__ - Amount of decimals token reward contract uses
+- __decimals__ - Number of decimals token reward contract uses
 - __levels__ - Array which represents ranks and reward values. You can check the format in example configuration above. You can just copy-paste it from your interface configuration
 
 After you're done with the configuration, just run this in your terminal:
