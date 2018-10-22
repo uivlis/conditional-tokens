@@ -1,6 +1,6 @@
 # Extending and Adding Wallet Providers
 
-The Gnosis Apollo interface is built with extendability in mind, if you require a new integration for a wallet, that is not yet supported, here is how to get started.
+The Gnosis Apollo interface is built with extendability in mind, if you require new integration for a wallet that is not  supported yet, here is how to get started.
 
 This guide assumes you know how to set up the interface, and you have development tools set up.
 
