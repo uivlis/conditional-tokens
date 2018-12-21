@@ -17,7 +17,11 @@ npm i
 ````
 You need to modify `conf/config.json` and use an ethereum account you own which has ether. [check the rinkeby faucet](https://faucet.rinkeby.io/)
 
-You can use this config:
+You can use the example configuration below that comes with the project for our test account:
+
+**Don't use the test account with real funds or in production. Create another account for yourself with metamask, ganache-cli or another ethereum wallet provider, and make sure you change the credentials to match that account.**
+
+
 ```json
 {  
    "accountCredential":"man math near range escape holiday monitor fat general legend garden resist",
@@ -42,7 +46,6 @@ You can use this config:
    "collateralToken":"0xd19bce9f7693598a9fa1f94c548b20887a33f141"
 }
 ```
-**Please note that we are using a TEST ACCOUNT in the example above. Don't use the account specified above with real funds or in production. Create another account for yourself with metamask, ganache-cli or another ethereum wallet provider**
 
 You can use the example market `pm-scripts/examples/categoricalMarket.json` or modify its content. **Be careful with the date format**. Otherwise it won't be indexed by the backend service.
 
