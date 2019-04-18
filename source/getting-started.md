@@ -29,12 +29,12 @@ You can use the example configuration below that comes with the project for our 
    "account":"0x7ec8664a7be9c96a7e8b627f84789e5850887312",
    "blockchain":{  
       "protocol":"https",
-      "host":"rinkeby.infura.io/gnosis/",
+      "host":"rinkeby.infura.io",
       "port":"443"
    },
    "pm-trading-db":{  
       "protocol":"https",
-      "host":"tradingdb.rinkeby.gnosis.pm",
+      "host":"tradingdb.rinkeby.gnosis.io",
       "port":"443"
    },
    "ipfs":{  

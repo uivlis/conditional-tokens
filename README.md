@@ -1,6 +1,6 @@
 # Introduction
 
-Towards the end of 2017, Gnosis hosted a prediction market tournament called [Olympia](https://blog.gnosis.pm/announcing-gnosis-olympia-5fb7e16dd259). It combined [pm-trading-db](https://github.com/gnosis/pm-trading-db), the [core smart contracts](https://github.com/gnosis/pm-contracts), and the pm-js library in the context of a [user interface](https://github.com/gnosis/pm-trading-ui) we've been developing. For making easier the deployment of prediction markets, we created a simple command line tool called [pm-scripts](https://github.com/gnosis/pm-scripts) that allows to create from simple prediction markets to complex futarchy markets.
+Towards the end of 2017, Gnosis hosted a prediction market tournament called [Olympia](https://blog.gnosis.io/announcing-gnosis-olympia-5fb7e16dd259). It combined [pm-trading-db](https://github.com/gnosis/pm-trading-db), the [core smart contracts](https://github.com/gnosis/pm-contracts), and the pm-js library in the context of a [user interface](https://github.com/gnosis/pm-trading-ui) we've been developing. For making easier the deployment of prediction markets, we created a simple command line tool called [pm-scripts](https://github.com/gnosis/pm-scripts) that allows to create from simple prediction markets to complex futarchy markets.
 
 We will be assuming at least basic knowledge of the following:
 
@@ -9,7 +9,7 @@ We will be assuming at least basic knowledge of the following:
 * [Truffle](http://truffleframework.com/)
 
 ## Documentation
-Read the last documentation in: 
+Read the last documentation in:
 * [https://gnosis-apollo.readthedocs.io/en/latest/](https://gnosis-apollo.readthedocs.io/en/latest/).
 It's a work in progress, so comments, suggestions, and collaborations are appreciated.
 
