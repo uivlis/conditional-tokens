@@ -13,7 +13,7 @@ permalink_defaults:
   lang: en
 i18n_dir: :lang
 
-url: https://gnosis.github.io
+url: https://gnosis.github.io/
 root: /conditional-tokens/
 permalink: news/:year/:month/:day/:title/
 archive_dir: news
