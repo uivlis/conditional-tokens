@@ -1,27 +1,41 @@
-# Introduction
+# EIP 1155 - Conditional tokens for the brave, true or false
 
-Towards the end of 2017, Gnosis hosted a prediction market tournament called [Olympia](https://blog.gnosis.io/announcing-gnosis-olympia-5fb7e16dd259). It combined [pm-trading-db](https://github.com/gnosis/pm-trading-db), the [core smart contracts](https://github.com/gnosis/pm-contracts), and the pm-js library in the context of a [user interface](https://github.com/gnosis/pm-trading-ui) we've been developing. For making easier the deployment of prediction markets, we created a simple command line tool called [pm-scripts](https://github.com/gnosis/pm-scripts) that allows to create from simple prediction markets to complex futarchy markets.
+This repo hosts the code for Gnosis' conditional tokens documentation site, explaining our unique implementation of EIP 1155 in order to create _conditional tokens_ ideally suited to prediction markets.
 
-We will be assuming at least basic knowledge of the following:
+Anyone is free to add to or edit this code - the more documentation we get, the better.
 
-* [Ethereum](https://www.ethereum.org/)
-* [Solidity](https://github.com/ethereum/solidity)
-* [Truffle](http://truffleframework.com/)
+## Adding a New Page
 
-## Documentation
-Read the last documentation in:
-* [https://gnosis-apollo.readthedocs.io/en/latest/](https://gnosis-apollo.readthedocs.io/en/latest/).
-It's a work in progress, so comments, suggestions, and collaborations are appreciated.
+If you want to add a page to specific section, rather than just edit an existing page, you'll need to make sure your new page appears on the sidebar and is accessible to everyone.
 
-## Collaboration
-Apollo it's composed by many open source projects with the goal of providing a foundational framework for building prediction market platforms.
-Meet the community in the Gitter channel!
-* [https://gitter.im/gnosis/Apollo](https://gitter.im/gnosis/Apollo)
+1. Add your page to `source/<your_section>/<your_file_here>.md`
+2. In `source/_data/sidebars.yml` add the appropriate text to the appropriate place.
+3. In `themes/navy/languages/en.yml` edit the sidebars section to make sure that your new text in `sidebars.yml` is rendered correctly.
 
-## Generate the doc
-```sh
-virtualenv -p python3 env
-. env/bin/activate
-pip install -r requirements.txt
-make livehtml
+## Testing locally
+
+Make sure you have node.js installed first.
+
+1. Open Terminal and navigate to the project root directory,
+2. Run `npm install`
+3. Run `npm run build`,
+4. In another terminal, run `npm run serve`.
+
+## Contributing More
+
+1. If you would like add new styles, you can find all the `sass` files in `themes/navy/source/scss` - add your own there and keep things modular, clean and performing well.
+2. If you would like to add some JS for animations of images, or other potential bounties, the place to do that is `themes/navy/source/js`.
+3. Changing the header, footer, mobile nav, or scripts (in `after_footer`) can be done in `themes/navy/layout/partial`.
+4. Each new subdirectory gets it's own route, so if you want to add a new section like `conditional-tokens/extensions` or `conditional-tokens/contribute`, then just create a new directory in `source`, name it what you want the route to be called, and add an `index.md` file to it. 
+
+If you want it to have a unique layout, set it up something like this:
+
 ```
+---
+layout: extensions
+title: MultiToken Gaming Tutorial
+id: index
+---
+```
+
+and then create the appropriate `extensions.ejs` layout file in `themes/navy/layout`. `.ejs` files are _exactly_ like html - so just write html in there and don't stress.

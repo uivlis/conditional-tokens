@@ -1,0 +1,41 @@
+// Colors
+
+$black: #000000;
+$light-black: #090909;
+$darker-grey: #222325;
+$dark-grey: #3C4049;
+$white: #ffffff;
+$white-smoke: #f3f2f2;
+$light-grey: #63666D;
+$purple: #4360DF;
+$dark-purple: #1C36AA;
+$light-blue: #009CB4;
+$dark-blue: #001428;
+$lighter-grey: #EAECEF;
+
+// Font Family
+
+@font-face {
+    font-family: 'Averta';
+    src: url('../fonts/Averta-Regular.otf') format('otf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Averta';
+    src: url('../fonts/Averta-Bold.otf') format('otf');
+    font-weight: 800;
+    font-style: normal;
+}
+
+$averta: 'Averta', sans-serif;
+$averta-regular: 400;
+$averta-medium: 500;
+$averta-semi-bold: 600;
+$averta-bold: 800;
+
+$ibm-plex-mono: 'IBM Plex Mono', monospace;
+$ibm-plex-mono-regular: 400;
+$ibm-plex-mono-medium: 500;
+$ibm-plex-mono-semi-bold: 600;

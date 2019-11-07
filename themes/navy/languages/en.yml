@@ -1,0 +1,82 @@
+site:
+  home:
+    intro:
+      title: "Learn how to build liquid digital economies. For the brave, true or false."
+    decentralized:
+      subtitle: "A Multi Token World"
+      title: "Permissionless Innovation"
+      description: "Ethereum always has always promoted permissionless innovation. ERC-1155 is the latest in an already impressive array of examples, and is being developed and used actively by everyone from game developers to prediction market makers."
+      link: "Docs"
+    private:
+      subtitle: "Better Governance"
+      title: "Our Mission"
+      description: "Continue reforming financial systems by creating liquidity and efficient market mechanisms for any kind of digital asset. Promote new use cases, like prediction markets, to enable better decision-making and collaboration at scales never before seen."
+    wallet:
+      subtitle: "Enabling Community Money"
+      title: "Safe and Secure"
+      description: "Safely send, store and receive all your crypto assets with the most secure smart wallet in the world."
+    browser:
+      subtitle: "Become a Pioneer"
+      title: "DEXs and dFusion"
+      description: "Help us with cutting-edge research on running decentralized exchanges on public and permissionless networks."
+    summary:
+      title: "Secure Markets for Everyone"
+      description: "Price discovery mechanisms have changed the world. Now, we can ensure they remain free and unstoppable forever, as well as grant anyone with an internet connection the ability to use them. This is a revolution in what — and how — we value."
+  docs:
+    stripe:
+      title: "Conditional Tokens Documentation"
+    title: "Welcome to the world of conditional tokens!"
+    description: "Get familiar with the concepts and techniques for using new kinds of tokens:"
+    categories:
+      technical-documentation:
+        title: "Technical Documentation"
+        description: "Growing our distributed ecosystem"
+      conditional-tokens:
+        title: "Conditional Tokens"
+        description: "A new world of liquid prediction markets"
+      get-started:
+        title: "Get Started"
+        description: "It's all about the quick setup"
+      tutorials:
+        title: "Tutorials"
+        description: "Get Your Hands Dirty"
+      research:
+        title: "Research"
+        description: "Dive in! Learn more."
+    pinned-repositories:
+      title: "Pinned Repositories"
+      eip-1155:
+        title: "eip-1155"
+        description: "Ethereum Improvement Process: MultiToken Standard"
+      dex-research:
+        title: "dex-research"
+        description: "The latest Gnosis research papers"
+    help:
+      title: "We are here to help!"
+      description: "We're always happy to help with code or any questions you have."
+      link-1: "Submit an issue on GitHub"
+      link-2: "Email us"
+  header:
+    nav:
+      get-involved:
+        title: "Get Involved"
+        description: "Build better economies with people from all over the world."
+      docs:
+        title: "Documentation"
+        description: "Everything you need to start <br>building better markets"
+        link: "Docs"
+        link-1: "Overview"
+        link-2: "EIP-1155"
+        link-3: "Conditional Tokens"
+        link-4: "Get Started"
+        link-5: "Tutorials"
+        link-6: "Research"
+      blog: "Blog"
+  footer:
+    title: "Get a Grant and Start Building"
+  link:
+    get-involved: "Get Involved"
+    docs: "Docs"
+    gnosis: "Gnosis"
+    learn-more: "Learn More"
+    read-all: "Get Learning"
