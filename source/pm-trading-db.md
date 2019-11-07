@@ -10,12 +10,12 @@ There are many ways we could execute this software but we will cover the 4 most 
 * [Docker-compose](#docker-compose)
 * Docker
 * Container Orchestrator. e.g Kubernetes
-* Bare-metal 
+* Bare-metal
 
 ## Docker-compose
 [docker-compose](https://docs.docker.com/compose/) is a a tool for defining and running multi-container Docker applications and link the dependencies between them. You can see it as tool for managing micro-service and container projects as monoliths, to make the execution easier for development.
 
-We've defined many services inside our [docker-compose.yml](https://github.com/gnosis/pm-trading-db/blob/master/docker-compose.yml), such as the postgresql database and  redis cache. This makes the onboarding very simple. You just need to run two commands: 
+We've defined many services inside our [docker-compose.yml](https://github.com/gnosis/pm-trading-db/blob/master/docker-compose.yml), such as the postgresql database and  redis cache. This makes the onboarding very simple. You just need to run two commands:
 ```
 docker-compose build
 docker-compose up
@@ -27,7 +27,7 @@ docker-compose run web sh
 docker-compose run worker sh
 docker-compose run scheduler sh
 python manage.py
-``` 
+```
 
 Note that by default, the configuration used is for the Rinkeby network. Check `config.settings.rinkeby`
 
@@ -121,7 +121,7 @@ In the project you will find some configuration templates for different environm
 * `base.py` As the name says, it's the base of all the config parameters. It has the common configurations and the default values.
 * `ganache.py` You should use this config when testing with [ganache-cli](https://github.com/trufflesuite/ganache-cli) running `ganache-cli -d`.
 * `production.py` Disables the debug settings and is oriented to be use on mainnet (or a testnet for running an olympia tournament).
-* `rinkeby.py` Has configured the default addresses for rinkeby and also for one of the Olympia tournaments [Gnosis ran](https://blog.gnosis.pm/announcing-gnosis-olympia-dappcon-edition-be44643a046e) as an example.
+* `rinkeby.py` Has configured the default addresses for rinkeby and also for one of the Olympia tournaments [Gnosis ran](https://blog.gnosis.io/announcing-gnosis-olympia-dappcon-edition-be44643a046e) as an example.
 * `test.py` Used by tests.
 
 Here you have a list of all the possible parameters you can set as ENV parameter (not all configs allows to override by ENV).
@@ -133,22 +133,22 @@ Here you have a list of all the possible parameters you can set as ENV parameter
 ### CELERY_BROKER_URL
 `url` - Follows [this format](https://kombu.readthedocs.io/en/master/userguide/connections.html#connection-urls)
 
-### ETH_BACKUP_BLOCKS 
+### ETH_BACKUP_BLOCKS
 `int` - amount of blocks saved for rollbacks (chain reorgs). It's 100 by default.
 
-### ETH_PROCESS_BLOCKS 
+### ETH_PROCESS_BLOCKS
 `int` - number of blocks processed as bulk for the indexer every time an indexing task is triggered (by default every 500ms). Increasing this value will "maybe" mean the indexing will be faster, but that will also depend on the cpu, memory and network resources. There will be many RPC requests and you might kill your ethereum node instance.
 
-### ETH_FILTER_MAX_BLOCKS 
+### ETH_FILTER_MAX_BLOCKS
 `int` - follows the same concept than the previous parameter. But instead pulling ethereum logs, it uses ethereum filters. Ethereum filters are used for the first sync as those are faster for synchronizing historic data.
 
 ### ETHEREUM_NODE_URL (mandatory in production)
 `protocol://host:port` - The RPC endpoint of your ethereum node.
 
-### ETHEREUM_MAX_WORKERS 
+### ETHEREUM_MAX_WORKERS
 `int` - default `10`. Represents the amount of parallel processes performing requests to the ethereum node.
 
-### ETHEREUM_MAX_BATCH_REQUESTS 
+### ETHEREUM_MAX_BATCH_REQUESTS
 `int` - default `500`. Amount of RPC requests batched in one single HTTP request.
 
 ### IPFS_HOST
@@ -243,7 +243,7 @@ class TestEventReceiver(AbstractEventReceiver):
 ## Add contract ABI
 If you want to listen to events for your **own contract**, you need to add the **json ABI** to **tradingdb/chainevents/abis/** folder to make pm-trading-db capable of decoding the events.
 
-Then you need to configure your receiver before starting **pm-tradingdb** for the first time. Go to **config/settings/olympia.py** and add your event receiver as a Python dictionary. 
+Then you need to configure your receiver before starting **pm-tradingdb** for the first time. Go to **config/settings/olympia.py** and add your event receiver as a Python dictionary.
 
 Required fields are:
   - **ADDRESSES**: List addresses of the contracts to be watched for events. If you need to watch one single address, use a one element list.

@@ -1,7 +1,7 @@
 # PM-SCRIPTS
-pm-scripts is the recommended tool for deploying your prediction markets contracts. It allows you to deploy all kinds of prediction markets easily in any network even without having a full understanding of what all the pieces of a prediction market are. 
+pm-scripts is the recommended tool for deploying your prediction markets contracts. It allows you to deploy all kinds of prediction markets easily in any network even without having a full understanding of what all the pieces of a prediction market are.
 
-Let's start by getting the [pm-scripts](https://github.com/gnosis/pm-scripts). 
+Let's start by getting the [pm-scripts](https://github.com/gnosis/pm-scripts).
 ```sh
 git clone https://github.com/gnosis/pm-scripts
 npm i
@@ -40,8 +40,8 @@ We will configure the utils in the following way:
 * **accountCredential**: This is your wallet credential. Can be either an HD wallet mnemonic phrase composed by 12 words ([HD wallet repository](https://github.com/trufflesuite/truffle-hdwallet-provider)) or a private key ([HD wallet private key repository](https://github.com/rhlsthrm/truffle-hdwallet-provider-privkey));
 * **credentialType**: is the type of credential you want to use to access your account, available values: `mnemonic`, `privateKey`, default is `privateKey`;
 * **account**: is your ethereum address, all transactions will be sent from this address. If not provided, pm-scripts will calculate it from your mnemonic phrase;
-* **blockchain**: defines the Ethereum Node that pm-scripts should send transactions to (https://rinkeby.infura.io/gnosis/ by default);
-* **tradingDB**: defines the [pm-trading-db](pm-trading-db/) url, an Ethereum indexer which exposes a handy API to get your list of markets and their details (default: https://tradingdb.rinkeby.gnosis.pm:443);
+* **blockchain**: defines the Ethereum Node that pm-scripts should send transactions to (https://rinkeby.infura.io by default);
+* **tradingDB**: defines the [pm-trading-db](pm-trading-db/) url, an Ethereum indexer which exposes a handy API to get your list of markets and their details (default: https://tradingdb.rinkeby.gnosis.io:443);
 * **ipfs**: sets the IPFS node that pm-scripts should send transactions to (https://ipfs.infura.io:5001 by default);
 * **gasPrice**: the desired gasPrice
 * **collateralToken**: the Collateral Token contract's address (e.g Ether Token):

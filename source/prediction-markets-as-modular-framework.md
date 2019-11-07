@@ -1,9 +1,9 @@
 # Prediction markets as a modular framework
-Our modular framework aims to provide the foundational protocol upon which projects using prediction markets can grow. 
+Our modular framework aims to provide the foundational protocol upon which projects using prediction markets can grow.
 In this section we describe the different layers that compose the prediction markets framework.
 
 ## Trading UI
-The generic interface to interact with prediction markets is trading-ui, a javascript project built with React that you can use as starting point to adapt it for [your particular use case](https://blog.gnosis.pm/the-power-of-prediction-markets-fedea0b71244) 
+The generic interface to interact with prediction markets is trading-ui, a javascript project built with React that you can use as starting point to adapt it for [your particular use case](https://blog.gnosis.io/the-power-of-prediction-markets-fedea0b71244)
 
 
 ## Ethereum Indexer
@@ -27,6 +27,6 @@ You can directly use the contracts with web3, and it could be more intuitive for
 ## Smart Contracts
 The Smart Contracts are designed in a modular manner in order to make it easy to integrate with different Ethereum projects and extend their functionality. For example, you could use Gnosis Smart Contracts for all trading functionalities and use Augur as an Oracle by extending the Oracle interface and build a [Smart Contract Adapter](https://en.wikipedia.org/wiki/Adapter_pattern).
 
-The main components are described in [this blog post](https://blog.gnosis.pm/getting-to-the-core-4db11a31c35f).
+The main components are described in [this blog post](https://blog.gnosis.io/getting-to-the-core-4db11a31c35f).
 
 ![Smart Contracts Architecture](https://cdn-images-1.medium.com/max/800/1*MIkHKEdWn9-KvhoT1Xk7Gg.png)
