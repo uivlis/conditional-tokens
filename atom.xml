@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Gnosis</title>
+  
+  <subtitle>Conditional tokens for the brave, true or false</subtitle>
+  <link href="/conditional-tokens/atom.xml" rel="self"/>
+  
+  <link href="https://gnosis.github.io/"/>
+  <updated>2019-08-05T14:53:34.202Z</updated>
+  <id>https://gnosis.github.io/</id>
+  
+  <author>
+    <name>Gnosis</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Gnosis Conditional Tokens</title>
+    <link href="https://gnosis.github.io/news/2019/11/07/2019-0-8-01-preview/"/>
+    <id>https://gnosis.github.io/news/2019/11/07/2019-0-8-01-preview/</id>
+    <published>2019-11-07T15:00:53.297Z</published>
+    <updated>2019-08-05T14:53:34.202Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="Gnosis-Conditional-Tokens"><a href="#Gnosis-Conditional-Tokens" class="headerlink" title="Gnosis Conditional Tokens"></a>Gnosis Conditional Tokens</h1>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;Gnosis-Conditional-Tokens&quot;&gt;&lt;a href=&quot;#Gnosis-Conditional-Tokens&quot; class=&quot;headerlink&quot; title=&quot;Gnosis Conditional Tokens&quot;&gt;&lt;/a&gt;Gnosis Cond
+      
+    
+    </summary>
+    
+    
+  </entry>
+  
+</feed>
