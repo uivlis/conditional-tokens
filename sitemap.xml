@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://gnosis.github.io/conditional-tokens/contract.html</loc>
+    
+    <lastmod>2019-11-11T15:18:36.123Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://gnosis.github.io/index.html</loc>
     
     <lastmod>2019-11-07T12:18:00.131Z</lastmod>
@@ -26,13 +33,6 @@
     <loc>https://gnosis.github.io/conditional-tokens/get-started.html</loc>
     
     <lastmod>2019-11-07T10:34:14.405Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://gnosis.github.io/conditional-tokens/contract.html</loc>
-    
-    <lastmod>2019-11-07T10:33:40.765Z</lastmod>
     
   </url>
   

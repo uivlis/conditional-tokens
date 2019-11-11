@@ -113,25 +113,17 @@
 						<div class="col-md-12">
 							<div class="editor-content">
 								<h1 id="Conditional-Token-Overview" class="article-heading"><a href="#Conditional-Token-Overview" class="headerlink" title="Conditional Token Overview"></a>Conditional Token Overview<a class="article-anchor" href="#Conditional-Token-Overview" aria-hidden="true"></a></h1><p>In order to understand <a href="https://github.com/gnosis/conditional-tokens-contracts/blob/master/contracts/ConditionalTokens.sol" target="_blank" rel="noopener">conditional tokens</a>, you need to grasp how they are used to construct <em>positions</em>. A “position” is a financial term which can be described as a buy or sell action that reflects someone’s belief in an asset’s, or multiple assets’, future price.</p>
-<h2 id="Positions" class="article-heading"><a href="#Positions" class="headerlink" title="Positions"></a>Positions<a class="article-anchor" href="#Positions" aria-hidden="true"></a></h2><p>Positions consist of collateral (ERC-20 tokens) and one or more <em>conditions</em> with <em>outcome collections</em>. Positions become valuable precisely when all of its outcome conditions are reported as true.</p>
-<p>We explain conditions and outcome collections below, but shown here as some complex conditions to illustrate the power of conditional tokens and positions. Consider a dollar (DAI) collateralized position with two conditions:</p>
+<h2 id="Positions" class="article-heading"><a href="#Positions" class="headerlink" title="Positions"></a>Positions<a class="article-anchor" href="#Positions" aria-hidden="true"></a></h2><p>Positions consist of collateral (ERC-20 tokens) and one or more <em>conditions</em> with <em>outcome collections</em>. Positions become valuable precisely when all of its conditions are reported as true.</p>
+<p>How to construct conditions and outcome collections is explained below, but here are some complex conditions to illustrate the power of conditional tokens and positions. Consider a dollar (DAI) collateralized position with two conditions:</p>
 <ol>
 <li>Condition 1, with outcome collection <code>[A, B, C]</code></li>
 <li>Condition 2, with outcome collection <code>[HI, LO]</code></li>
 </ol>
-<p>Further, consider Boolean <code>OR</code> possibilities that might make interesting positions.</p>
-<ol>
-<li>A or B, B or C, A or C</li>
-</ol>
-<p>We can add those possibilities to the outcome collection for Condition 1:</p>
-<ol>
-<li>Condition 1, with outcome collection <code>[A, B, C, A|B, B|C, A|C]</code></li>
-</ol>
-<p>We can commit collateral to either (or both!) of these conditions and create conditional tokens for each outcome. We denote collateralized positions as <code>$:(A|B)</code>, meaning “collateral” (can be DAI, US Dollar equivalents, or another ERC-20 token) for the “A or B” outcome. Similarly, <code>$:(LO)</code> means collateral and the “LO” outcome. Most interestingly, we can merge these positions into a deeper position like <code>$:(A|B)&amp;(LO)</code>. This notation shows collateral staked on A or B for the first condition, and LO for the second condition. Moving between positions and trading on open markets has never been easier.</p>
+<p>The contract will take collateral for either (or both!) of these conditions and create conditional tokens for each outcome. We denote collateralized positions as <code>$:(A|B)</code>, meaning “collateral” (can be DAI, US Dollar equivalents, or another ERC-20 token) for the “A or B” outcome. Similarly, <code>$:(LO)</code> means collateral and the “LO” outcome. Most interestingly, we can merge these positions into a deeper position like <code>$:(A|B)&amp;(LO)</code>. This notation shows collateral staked on A or B for the first condition, and LO for the second condition. Moving between positions and trading on open markets has never been easier.</p>
 <p>Here is a graph of all positions that are contingent on the outcome of these two conditions:</p>
 <p><img src="../img/outcomes.png" alt="Outcomes"></p>
 <p>Focus on this <strong>critical point</strong>: a position is now a clearly defined mathematical construct on a public and decentralized network. Anybody can create a condition, and anybody can take a position on that condition. This construct allows as many markets to exist as there are tokens, and for each of those markets to benefit from a global pool of liquidity.</p>
-<h2 id="Conditions" class="article-heading"><a href="#Conditions" class="headerlink" title="Conditions"></a>Conditions<a class="article-anchor" href="#Conditions" aria-hidden="true"></a></h2><p>Let’s take a step back. Before conditional tokens can exist, a condition must be prepared. Preparing a condition means that you must define several specifications of a condition, including how a specific oracle reports the condition’s outcome. The following function is used to prepare a condition, which will be decided when the oracle submits what we call a “payout vector”:</p>
+<h2 id="Conditions" class="article-heading"><a href="#Conditions" class="headerlink" title="Conditions"></a>Conditions<a class="article-anchor" href="#Conditions" aria-hidden="true"></a></h2><p>Let’s take a step back. Before conditional tokens can exist, a condition must be prepared. Preparing a condition means that you must define several specifications for that condition, including how a specific oracle reports the condition’s outcome. The following function is used to prepare a condition, which will be decided when the oracle submits what we call a “payout vector”:</p>
 <pre><code class="solidity">function prepareCondition(address oracle, bytes32 questionId, uint payoutDenominator, uint outcomeSlotCount) external
 </code></pre>
 <ol>
@@ -222,7 +214,7 @@
 
 							</div>
 							<div class="docs-footer">
-								Last update: 2019-11-07
+								Last update: 2019-11-11
 								
 							</div>
 						</div>
