@@ -26,7 +26,7 @@ To decipher this function, let’s consider what would be considered a valid spl
 
 ## Basic Splits
 
-Collateral `$` can be split into outcome tokens in positions `$:(A)`, `$:(B)`, and `$:(C)`. To do so, use the following code:
+Collateral `$` can be [split into outcome tokens in positions](https://github.com/gnosis/conditional-tokens-contracts/blob/master/contracts/ConditionalTokens.sol#L105) `$:(A)`, `$:(B)`, and `$:(C)`. To do so, use the following code:
 
 ```js
     const amount = 1e18 // could be any amount
@@ -129,7 +129,7 @@ Supplying a partition which does not cover the set of all outcome slots for a co
 
 ## Merging Positions
 
-Merging positions does precisely the opposite of splitting a position. It burns outcome tokens in the deeper positions to either mint outcome tokens in a shallower position, or send collateral to the message sender. You can see below that merging is the same as splitting, except in reverse:
+[Merging positions](https://github.com/gnosis/conditional-tokens-contracts/blob/master/contracts/ConditionalTokens.sol#L165) does precisely the opposite of splitting a position. It burns outcome tokens in the deeper positions to either mint outcome tokens in a shallower position, or send collateral to the message sender. You can see below that merging is the same as splitting, except in reverse:
 
 ![Merging Positions](../img/merge-positions.png)
 
@@ -155,7 +155,7 @@ safeMulticastTransferFrom(address[] from, address[] to, uint256[] positionIds, u
 
 ## Redeeming Positions
 
-Before this is possible, the payout vector must be submitted by the oracle:
+Before this is possible, the [payout vector must be submitted](https://github.com/gnosis/conditional-tokens-contracts/blob/master/contracts/ConditionalTokens.sol#L78) by the oracle:
 
 ```solidity
 function reportPayouts(bytes32 questionId, uint[] calldata payouts) external
@@ -165,7 +165,7 @@ This will emit the following event:
 ```solidity
 event ConditionResolution(bytes32 indexed conditionId, address indexed oracle, bytes32 indexed questionId, uint outcomeSlotCount, uint[] payoutNumerators)
 ```
-Then positions containing this condition can be redeemed via:
+Then [positions containing this condition can be redeemed](https://github.com/gnosis/conditional-tokens-contracts/blob/master/contracts/ConditionalTokens.sol#L218) via:
 
 ```solidity
 function redeemPositions(IERC20 collateralToken, bytes32 parentCollectionId, bytes32 conditionId, uint[] calldata indexSets) external

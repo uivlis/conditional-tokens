@@ -9,32 +9,31 @@ In order to understand [conditional tokens](https://github.com/gnosis/conditiona
 
 ## Positions
 
-Positions consist of collateral (ERC-20 tokens) and one or more _conditions_ with _outcome collections_. Positions become valuable precisely when all of its outcome conditions are reported as true.
+Positions consist of collateral (ERC-20 tokens) and one or more _conditions_ with _outcome collections_. Positions become valuable precisely when all of its conditions are reported as true.
 
-We explain conditions and outcome collections below, but shown here as some complex conditions to illustrate the power of conditional tokens and positions. Consider a dollar (DAI) collateralized position with two conditions:
+This is the basic flow of events in the contract:
+
+1. Anyone can call [prepareCondition](https://github.com/gnosis/conditional-tokens-contracts/blob/master/contracts/ConditionalTokens.sol#L65), given that it is an `external` function.
+2. In order to do so, they must provide an "outcomeSlotCount" - that is, a description of the various possible outcomes which can be reported on by the oracle they must also pass in.
+3. People can then take a "position", which simply means locking up some collateral in the contract and buying conditional tokens associated with one of the provided outcome slots.
+4. Once you have taken a position, you can then [split that position](https://github.com/gnosis/conditional-tokens-contracts/blob/master/contracts/ConditionalTokens.sol#L105) to a "deeper" one, or merge it back to a "shallower" one. Importantly, this allows us to use the same collateral for many different markets and illustrates the power of decentralized prediction markets which can provide much improved liquidty for niche markets.
+5. Once the original condition can be answered, the orcal submits a "payout vector" which dictates which outcome slots were correct.
+6. The conditional tokens associated with those outcome slots are then redeemable for the underlying collateral.
+
+## First Example 
+
+Consider a dollar (DAI) collateralized position with two conditions:
 
 1. Condition 1, with outcome collection `[A, B, C]`
 2. Condition 2, with outcome collection `[HI, LO]`
 
-Further, consider Boolean `OR` possibilities that might make interesting positions.
-
-1. A or B, B or C, A or C
-
-We can add those possibilities to the outcome collection for Condition 1:
-
-1. Condition 1, with outcome collection `[A, B, C, A|B, B|C, A|C]`
-
-We can commit collateral to either (or both!) of these conditions and create conditional tokens for each outcome. We denote collateralized positions as `$:(A|B)`, meaning “collateral” (can be DAI, US Dollar equivalents, or another ERC-20 token) for the "A or B" outcome. Similarly, `$:(LO)` means collateral and the "LO" outcome. Most interestingly, we can merge these positions into a deeper position like `$:(A|B)&(LO)`. This notation shows collateral staked on A or B for the first condition, and LO for the second condition. Moving between positions and trading on open markets has never been easier.
-
-Here is a graph of all positions that are contingent on the outcome of these two conditions:
-
-![Outcomes](../img/outcomes.png)
+The contract will take collateral for either (or both!) of these conditions and create conditional tokens for each outcome. We denote collateralized positions as `$:(A|B)`, meaning “collateral” (can be DAI, US Dollar equivalents, or another ERC-20 token) for the "A or B" outcome. Similarly, `$:(LO)` means collateral and the "LO" outcome. Most interestingly, we can merge these positions into a deeper position like `$:(A|B)&(LO)`. This notation shows collateral staked on A or B for the first condition, and LO for the second condition. Moving between positions and trading on open markets has never been easier.
 
 Focus on this **critical point**: a position is now a clearly defined mathematical construct on a public and decentralized network. Anybody can create a condition, and anybody can take a position on that condition. This construct allows as many markets to exist as there are tokens, and for each of those markets to benefit from a global pool of liquidity.
 
 ## Conditions
 
-Let's take a step back. Before conditional tokens can exist, a condition must be prepared. Preparing a condition means that you must define several specifications of a condition, including how a specific oracle reports the condition’s outcome. The following function is used to prepare a condition, which will be decided when the oracle submits what we call a "payout vector":
+Let's take a step back. Before conditional tokens can exist, a condition must be prepared. [Preparing a condition](https://github.com/gnosis/conditional-tokens-contracts/blob/master/contracts/ConditionalTokens.sol#L65) means that you must define several specifications for that condition, including how a specific oracle reports the condition’s outcome. The following function is used to prepare a condition, which will be decided when the oracle submits what we call a "payout vector":
 
 ```solidity
 function prepareCondition(address oracle, bytes32 questionId, uint payoutDenominator, uint outcomeSlotCount) external
@@ -149,6 +148,6 @@ The important point to grasp here is that DAI may be staked in the contract as c
 
 It's easiest to see this at work if we draw out the same graph as earlier, hopefully now with greater understanding:
 
-![DAG](../img/all-positions-from-two-conditions.png)
+![DAG](../img/outcomes.png)
 
 The resulting nested and interconnected positions are what we are talking about when we say that every one of the millions of future tokens ought to have a market associated with it that can genuinely survive due to its access to a global liquidity pool.

@@ -13,6 +13,9 @@ git clone https://github.com/gnosis/conditional-markets-interface.git
 cd conditional-markets-interface
 npm install
 ```
+We understand that all the financial and technical jargon - positions, conditions, outcome collections - can be a little confusing. Therefore, this tutorial will help you set up a similar interface to the one you can find on [sight.pm](https://sight.pm/#markets), and you can practice setting up your own prediction markets for information you're interested in. Future tutorials will take you through some other, broader use-cases for conditional tokens, but prediction markets are the obvious first place to start.
+
+All you'll need to do is edit the [market.config.js](https://github.com/gnosis/conditional-markets-interface/blob/master/markets.config.js) file provided in the above git repo to create your own markets, and see what terms like "taking a position" really mean in practice!
 
 ## Quick Start
 
