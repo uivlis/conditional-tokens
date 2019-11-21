@@ -119,10 +119,11 @@
 <li>Anyone can call <a href="https://github.com/gnosis/conditional-tokens-contracts/blob/master/contracts/ConditionalTokens.sol#L65" target="_blank" rel="noopener">prepareCondition</a>, given that it is an <code>external</code> function.</li>
 <li>In order to do so, they must provide an “outcomeSlotCount” - that is, a description of the various possible outcomes which can be reported on by the oracle they must also pass in.</li>
 <li>People can then take a “position”, which simply means locking up some collateral in the contract and buying conditional tokens associated with one of the provided outcome slots.</li>
-<li>Once you have taken a position, you can then <a href="https://github.com/gnosis/conditional-tokens-contracts/blob/master/contracts/ConditionalTokens.sol#L105" target="_blank" rel="noopener">split that position</a> to a “deeper” one, or merge it back to a “shallower” one. Importantly, this allows us to use the same collateral for many different markets and illustrates the power of decentralized prediction markets which can provide much improved liquidty for niche markets.</li>
+<li>Once you have taken a position, you can then <a href="./split-merge-redeem.html">split that position</a> to a “deeper” one, or merge it back to a “shallower” one. Importantly, this allows us to use the same collateral for many different markets and illustrates the power of decentralized prediction markets which can provide much improved liquidty for niche markets.</li>
 <li>Once the original condition can be answered, the orcal submits a “payout vector” which dictates which outcome slots were correct.</li>
 <li>The conditional tokens associated with those outcome slots are then redeemable for the underlying collateral.</li>
 </ol>
+<p>If you’re struggling with all this text and prefer learning by example, <a href="../tutorials/">head over to our tutorial</a> on creating your own prediction markets and get your hands dirty there.</p>
 <h2 id="First-Example" class="article-heading"><a href="#First-Example" class="headerlink" title="First Example"></a>First Example<a class="article-anchor" href="#First-Example" aria-hidden="true"></a></h2><p>Consider a dollar (DAI) collateralized position with two conditions:</p>
 <ol>
 <li>Condition 1, with outcome collection <code>[A, B, C]</code></li>
