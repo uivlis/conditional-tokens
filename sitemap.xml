@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://gnosis.github.io/tutorials/index.html</loc>
+    
+    <lastmod>2019-11-21T12:51:23.336Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://gnosis.github.io/conditional-tokens/contract.html</loc>
     
     <lastmod>2019-11-21T10:18:23.938Z</lastmod>
@@ -12,13 +19,6 @@
     <loc>https://gnosis.github.io/conditional-tokens/split-merge-redeem.html</loc>
     
     <lastmod>2019-11-21T10:04:07.497Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://gnosis.github.io/tutorials/index.html</loc>
-    
-    <lastmod>2019-11-21T09:59:38.711Z</lastmod>
     
   </url>
   
