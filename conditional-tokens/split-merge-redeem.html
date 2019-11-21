@@ -122,7 +122,7 @@
 <p>If splitting from the collateral, the function will attempt to transfer collateral <em>amount</em> from the message sender to itself. Otherwise, it will burn <em>amount</em> stake held by the message sender in the position being split. Regardless, if successful, <em>amount</em> stake will be minted in the split target positions. If any of the transfers, mints, or burns fail, the transaction will revert. The transaction will also revert if the given partition is trivial, invalid, or refers to more slots than the condition is prepared with.</p>
 <p>To decipher this function, let’s consider what would be considered a valid split, and what would be invalid:</p>
 <p><img src="../img/valid-vs-invalid-splits.png" alt="Valid vs Invalid Positions"></p>
-<h2 id="Basic-Splits" class="article-heading"><a href="#Basic-Splits" class="headerlink" title="Basic Splits"></a>Basic Splits<a class="article-anchor" href="#Basic-Splits" aria-hidden="true"></a></h2><p>Collateral <code>$</code> can be split into outcome tokens in positions <code>$:(A)</code>, <code>$:(B)</code>, and <code>$:(C)</code>. To do so, use the following code:</p>
+<h2 id="Basic-Splits" class="article-heading"><a href="#Basic-Splits" class="headerlink" title="Basic Splits"></a>Basic Splits<a class="article-anchor" href="#Basic-Splits" aria-hidden="true"></a></h2><p>Collateral <code>$</code> can be <a href="https://github.com/gnosis/conditional-tokens-contracts/blob/master/contracts/ConditionalTokens.sol#L105" target="_blank" rel="noopener">split into outcome tokens in positions</a> <code>$:(A)</code>, <code>$:(B)</code>, and <code>$:(C)</code>. To do so, use the following code:</p>
 <pre><code class="js">    const amount = 1e18 // could be any amount
 
     // user must allow conditionalTokens to
@@ -248,7 +248,7 @@
         amount,
     )
 </code></pre>
-<h2 id="Merging-Positions" class="article-heading"><a href="#Merging-Positions" class="headerlink" title="Merging Positions"></a>Merging Positions<a class="article-anchor" href="#Merging-Positions" aria-hidden="true"></a></h2><p>Merging positions does precisely the opposite of splitting a position. It burns outcome tokens in the deeper positions to either mint outcome tokens in a shallower position, or send collateral to the message sender. You can see below that merging is the same as splitting, except in reverse:</p>
+<h2 id="Merging-Positions" class="article-heading"><a href="#Merging-Positions" class="headerlink" title="Merging Positions"></a>Merging Positions<a class="article-anchor" href="#Merging-Positions" aria-hidden="true"></a></h2><p><a href="https://github.com/gnosis/conditional-tokens-contracts/blob/master/contracts/ConditionalTokens.sol#L165" target="_blank" rel="noopener">Merging positions</a> does precisely the opposite of splitting a position. It burns outcome tokens in the deeper positions to either mint outcome tokens in a shallower position, or send collateral to the message sender. You can see below that merging is the same as splitting, except in reverse:</p>
 <p><img src="../img/merge-positions.png" alt="Merging Positions"></p>
 <p>To merge positions, use the following function:</p>
 <pre><code class="solidity">function mergePositions(IERC20 collateralToken, bytes32 parentCollectionId, bytes32 conditionId, uint[] calldata partition, uint amount) external
@@ -261,13 +261,13 @@
 safeBatchTransferFrom(address from, address to, uint256[] positionIds, uint256[] values, bytes data) external
 safeMulticastTransferFrom(address[] from, address[] to, uint256[] positionIds, uint256[] values, bytes data) external
 </code></pre>
-<h2 id="Redeeming-Positions" class="article-heading"><a href="#Redeeming-Positions" class="headerlink" title="Redeeming Positions"></a>Redeeming Positions<a class="article-anchor" href="#Redeeming-Positions" aria-hidden="true"></a></h2><p>Before this is possible, the payout vector must be submitted by the oracle:</p>
+<h2 id="Redeeming-Positions" class="article-heading"><a href="#Redeeming-Positions" class="headerlink" title="Redeeming Positions"></a>Redeeming Positions<a class="article-anchor" href="#Redeeming-Positions" aria-hidden="true"></a></h2><p>Before this is possible, the <a href="https://github.com/gnosis/conditional-tokens-contracts/blob/master/contracts/ConditionalTokens.sol#L78" target="_blank" rel="noopener">payout vector must be submitted</a> by the oracle:</p>
 <pre><code class="solidity">function reportPayouts(bytes32 questionId, uint[] calldata payouts) external
 </code></pre>
 <p>This will emit the following event:</p>
 <pre><code class="solidity">event ConditionResolution(bytes32 indexed conditionId, address indexed oracle, bytes32 indexed questionId, uint outcomeSlotCount, uint[] payoutNumerators)
 </code></pre>
-<p>Then positions containing this condition can be redeemed via:</p>
+<p>Then <a href="https://github.com/gnosis/conditional-tokens-contracts/blob/master/contracts/ConditionalTokens.sol#L218" target="_blank" rel="noopener">positions containing this condition can be redeemed</a> via:</p>
 <pre><code class="solidity">function redeemPositions(IERC20 collateralToken, bytes32 parentCollectionId, bytes32 conditionId, uint[] calldata indexSets) external
 </code></pre>
 <p>This will trigger the following event:</p>
@@ -278,7 +278,7 @@ safeMulticastTransferFrom(address[] from, address[] to, uint256[] positionIds, u
 
 							</div>
 							<div class="docs-footer">
-								Last update: 2019-10-02
+								Last update: 2019-11-21
 								
 							</div>
 						</div>
