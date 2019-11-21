@@ -16,9 +16,11 @@ This is the basic flow of events in the contract:
 1. Anyone can call [prepareCondition](https://github.com/gnosis/conditional-tokens-contracts/blob/master/contracts/ConditionalTokens.sol#L65), given that it is an `external` function.
 2. In order to do so, they must provide an "outcomeSlotCount" - that is, a description of the various possible outcomes which can be reported on by the oracle they must also pass in.
 3. People can then take a "position", which simply means locking up some collateral in the contract and buying conditional tokens associated with one of the provided outcome slots.
-4. Once you have taken a position, you can then [split that position](https://github.com/gnosis/conditional-tokens-contracts/blob/master/contracts/ConditionalTokens.sol#L105) to a "deeper" one, or merge it back to a "shallower" one. Importantly, this allows us to use the same collateral for many different markets and illustrates the power of decentralized prediction markets which can provide much improved liquidty for niche markets.
+4. Once you have taken a position, you can then [split that position](./split-merge-redeem.html) to a "deeper" one, or merge it back to a "shallower" one. Importantly, this allows us to use the same collateral for many different markets and illustrates the power of decentralized prediction markets which can provide much improved liquidty for niche markets.
 5. Once the original condition can be answered, the orcal submits a "payout vector" which dictates which outcome slots were correct.
 6. The conditional tokens associated with those outcome slots are then redeemable for the underlying collateral.
+
+If you're struggling with all this text and prefer learning by example, [head over to our tutorial](../tutorials/) on creating your own prediction markets and get your hands dirty there.
 
 ## First Example 
 
