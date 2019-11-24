@@ -14,7 +14,7 @@ Make sure your node version is 8.9.4 or above, then run:
 
 ```bash
 npm install -g truffle
-npm install -g ganche-cli
+npm install -g ganache-cli
 ```
 
 3. Before we try to integrate conditional tokens into anything, let's just get familiar with working with them, as there are some subtleties to this enormously cool new standard and the way we use it to enable liquid markets.
